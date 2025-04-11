@@ -85,6 +85,11 @@ function getNodeProperties(node: SceneNode) {
   if ('blendMode' in node) {
     properties.blendMode = node.blendMode;
   }
+  
+  // Extract main colors from fills
+  if ('fills' in node && node.fills && Array.isArray(node.fills)) {
+    properties.colors = extractColors(node.fills);
+  }
 
   // Get text properties if the node is a text node
   if (node.type === 'TEXT') {
@@ -104,6 +109,35 @@ function getNodeProperties(node: SceneNode) {
   }
 
   return properties;
+}
+
+// Function to extract colors from fills
+function extractColors(fills: readonly Paint[]) {
+  if (!fills || !Array.isArray(fills)) return [];
+
+  const colors = [];
+  
+  for (const fill of fills) {
+    if (fill.type === 'SOLID' && fill.visible !== false) {
+      const r = Math.round(fill.color.r * 255);
+      const g = Math.round(fill.color.g * 255);
+      const b = Math.round(fill.color.b * 255);
+      const a = fill.opacity !== undefined ? fill.opacity : 1;
+      
+      colors.push({
+        r, g, b, a,
+        hex: rgbToHex(r, g, b),
+        rgba: `rgba(${r}, ${g}, ${b}, ${a.toFixed(2)})`
+      });
+    }
+  }
+  
+  return colors;
+}
+
+// Helper function to convert RGB to HEX
+function rgbToHex(r: number, g: number, b: number) {
+  return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase();
 }
 
 // Listen for selection changes
