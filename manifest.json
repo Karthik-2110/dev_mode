@@ -1,0 +1,17 @@
+{
+  "name": "Dev Mode Lite",
+  "id": "dev-mode-lite",
+  "api": "1.0.0",
+  "main": "dist/code.js",
+  "ui": "src/ui.html",
+  "editorType": ["figma"],
+  "networkAccess": {
+    "allowedDomains": ["none"]
+  },
+  "menu": [
+    {
+      "name": "Open Inspector",
+      "command": "open-inspector"
+    }
+  ]
+} 
