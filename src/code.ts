@@ -54,28 +54,25 @@ function getAllColors(node: SceneNode) {
 async function getAllAssets(node: SceneNode) {
   let assets: any[] = [];
 
-  // Check if the node is an image or vector
-  if (node.type === 'VECTOR' || node.type === 'STAR' || node.type === 'LINE' || 
-      node.type === 'ELLIPSE' || node.type === 'POLYGON' || node.type === 'RECTANGLE' ||
-      node.type === 'FRAME' || node.type === 'COMPONENT' || node.type === 'INSTANCE') {
+  // Helper function to get vector elements
+  async function getVectorElements(node: SceneNode): Promise<any[]> {
+    let vectors: any[] = [];
     
-    try {
-      // Check if node supports export
-      if ('exportAsync' in node) {
-        // Get SVG export
-        const svg = await (node as ExportMixin).exportAsync({
+    // If the node itself is a vector, add it
+    if (node.type === 'VECTOR') {
+      try {
+        const svg = await node.exportAsync({
           format: 'SVG',
           svgOutlineText: true,
           svgIdAttribute: false
         });
 
-        // Get PNG export
-        const png = await (node as ExportMixin).exportAsync({
+        const png = await node.exportAsync({
           format: 'PNG',
           constraint: { type: 'SCALE', value: 2 }
         });
 
-        assets.push({
+        vectors.push({
           id: node.id,
           name: node.name,
           type: node.type,
@@ -84,21 +81,54 @@ async function getAllAssets(node: SceneNode) {
           svg: svg,
           png: png
         });
+      } catch (error) {
+        console.error('Error exporting vector:', error);
       }
-    } catch (error) {
-      console.error('Error exporting asset:', error);
     }
+    
+    // If node is a group or frame, export it as a whole
+    if (node.type === 'GROUP' || (node.type === 'FRAME' && node.children.some(child => child.type === 'VECTOR'))) {
+      try {
+        const svg = await node.exportAsync({
+          format: 'SVG',
+          svgOutlineText: true,
+          svgIdAttribute: false
+        });
+
+        const png = await node.exportAsync({
+          format: 'PNG',
+          constraint: { type: 'SCALE', value: 2 }
+        });
+
+        vectors.push({
+          id: node.id,
+          name: node.name,
+          type: node.type,
+          width: node.width,
+          height: node.height,
+          svg: svg,
+          png: png
+        });
+        
+        // Don't process children individually if we exported the group
+        return vectors;
+      } catch (error) {
+        console.error('Error exporting group:', error);
+      }
+    }
+    
+    // If node has children and wasn't exported as a group, recursively get vectors from them
+    if ('children' in node) {
+      for (const child of (node as ChildrenMixin).children) {
+        vectors = vectors.concat(await getVectorElements(child));
+      }
+    }
+    
+    return vectors;
   }
 
-  // If node has children, recursively get their assets
-  if ('children' in node) {
-    const children = node.children;
-    for (const child of children) {
-      const childAssets = await getAllAssets(child);
-      assets = assets.concat(childAssets);
-    }
-  }
-
+  // Get all vector elements from the node and its children
+  assets = await getVectorElements(node);
   return assets;
 }
 

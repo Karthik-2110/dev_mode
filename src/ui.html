@@ -145,6 +145,7 @@
       padding: 10px 16px;
       justify-content: space-between;
       cursor: pointer;
+      position: relative;
     }
 
     .color-item:hover {
@@ -487,7 +488,7 @@
       margin-right: 6px;
       background-size: contain;
       background-repeat: no-repeat;
-      background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMS4yNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS1zcXVhcmUtZGFzaGVkLW1vdXNlLXBvaW50ZXItaWNvbiBsdWNpZGUtc3F1YXJlLWRhc2hlZC1tb3VzZS1wb2ludGVyIj48cGF0aCBkPSJNMTIuMDM0IDEyLjY4MWEuNDk4LjQ5OCAwIDAgMSAuNjQ3LS42NDdsOSAzLjVhLjUuNSAwIDAgMS0uMDMzLjk0M2wtMy40NDQgMS4wNjhhMSAxIDAgMCAwLS42Ni42NmwtMS4wNjcgMy40NDNhLjUuNSAwIDAgMS0uOTQzLjAzM3oiLz48cGF0aCBkPSJNNSAzYTIgMiAwIDAgMC0yIDIiLz48cGF0aCBkPSJNMTkgM2EyIDIgMCAwIDEgMiAyIi8+PHBhdGggZD0iTTUgMjFhMiAyIDAgMCAxLTItMiIvPjxwYXRoIGQ9Ik05IDNoMSIvPjxwYXRoIGQ9Ik05IDIxaDIiLz48cGF0aCBkPSJNMTQgM2gxIi8+PHBhdGggZD0iTTMgOXYxIi8+PHBhdGggZD0iTTIxIDl2MiIvPjxwYXRoIGQ9Ik0zIDE0djEiLz48L3N2Zz4=");
+      background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMS4yNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS1zcXVhcmUtZGFzaGVkLW1vdXNlLXBvaW50ZXItaWNvbiBsdWNpZGUtc3F1YXJlLWRhc2hlZC1tb3VzZS1wb2ludGVyIj48cGF0aCBkPSJNMTIuMDM0IDEyLjY4MWEuNDk4LjQ5OCAwIDAgMSAuNjQ3LS42NDdsOSAzLjVhLjUuNSAwIDAgMS0uMDMzLjk0M2wtMy40NDQgMS4wNjhhMSAxIDAgMCAwLS42Ni42NmwtMS4wNjcgMy40NDNhLjUuNSAwIDAgMS0uOTQzLjAzM3oiLz48cGF0aCBkPSJNNSAzYTIgMiAwIDAgMC0yIDIiLz48cGF0aCBkPSJNMTkgM2EyIDIgMCAwIDEgMiAyIi8+PHBhdGggZD0iTTUgMjFhMiAyIDAgMCAxLTItMiIvPjxwYXRoIGQ9Ik05IDNoMSIvPjxwYXRoIGQ9Ik05IDIxaDIiLz48cGF0aCBkPSJNMTQgM2gxIi8+PHBhdGggZD0iTTMgOHYxIi8+PHBhdGggZD0iTTIxIDl2MiIvPjxwYXRoIGQ9Ik0zIDE0djEiLz48L3N2Zz4=");
     }
 
     .element-type {
@@ -598,35 +599,42 @@
     }
 
     .asset-preview {
-      width: 32px;
-      height: 32px;
+      width: 32px !important;
+      height: 32px !important;
       border-radius: 4px;
       background-color: #383838;
       display: flex;
       align-items: center;
       justify-content: center;
       overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
     .asset-preview img {
       width: 100%;
       height: 100%;
-      object-fit: contain;
+      object-fit: contain !important;
+      background-size: contain !important;
+      background-repeat: no-repeat !important;
+      background-position: center !important;
+      padding: 4px;
     }
 
     .asset-info {
       display: flex;
       flex-direction: column;
-      gap: 2px;
+      gap: 4px;
     }
 
     .asset-name {
-      font-size: 13px;
+      font-size: 12px;
       color: #FFFFFF;
+      font-weight: 400;
     }
 
     .asset-type {
-      font-size: 12px;
+      font-size: 10px;
+      font-weight: 400;
       color: rgba(255, 255, 255, 0.6);
     }
 
@@ -639,13 +647,18 @@
       transition: opacity 0.2s ease;
     }
 
+    .asset-item:hover .asset-right {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
     .asset-format-select {
-      background: transparent;
-      border: 1px solid #444444;
+      background: #2C2C2C;
+      border: transparent;
       border-radius: 4px;
       color: #FFFFFF;
-      font-size: 12px;
-      padding: 4px 8px;
+      font-size: 10px;
+      padding: 6px 8px;
       cursor: pointer;
       appearance: none;
       -webkit-appearance: none;
@@ -653,29 +666,35 @@
       background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMS4yNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS1jaGV2cm9uLWRvd24taWNvbiBsdWNpZGUtY2hldnJvbi1kb3duIj48cGF0aCBkPSJtNiA5IDYgNiA2LTYiLz48L3N2Zz4=");
       background-repeat: no-repeat;
       background-position: right 4px center;
-      background-size: 16px;
+      background-size: 14px;
     }
 
-    .asset-format-select:focus {
+    /* .asset-format-select:focus {
       outline: none;
       border-color: #666666;
-    }
+    } */
 
     .asset-download {
-      padding: 4px 8px;
+      height: 24px;
+      width: 24px;
       border-radius: 4px;
-      background-color: #444444;
+      background-color: #2C2C2C;
       color: #FFFFFF;
       font-size: 12px;
+      font-weight: 500;
       cursor: pointer;
       display: flex;
+      justify-content: center;
       align-items: center;
-      gap: 4px;
-      white-space: nowrap;
     }
 
-    .asset-download:hover {
-      background-color: #555555;
+    .download-icon {
+      width: 12px;
+      height: 12px;
+      background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNMjEgMTV2NGEyIDIgMCAwIDEtMiAySDVhMiAyIDAgMCAxLTItMnYtNCI+PC9wYXRoPjxwb2x5bGluZSBwb2ludHM9IjcgMTAgMTIgMTUgMTcgMTAiPjwvcG9seWxpbmU+PGxpbmUgeDE9IjEyIiB5MT0iMTUiIHgyPSIxMiIgeTI9IjMiPjwvbGluZT48L3N2Zz4=");
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
     }
   </style>
 </head>
@@ -1107,7 +1126,7 @@
         data.topRightRadius,
         data.bottomRightRadius,
         data.bottomLeftRadius
-      ].some(value => value !== undefined && value !== null);
+      ].some(value => typeof value === 'number');
       
       if (hasIndividualRadii) {
         borderLabel.textContent = "Border Radius";
@@ -1125,7 +1144,7 @@
         data.strokeRightWeight,
         data.strokeBottomWeight,
         data.strokeLeftWeight
-      ].some(value => value !== undefined && value !== null);
+      ].some(value => typeof value === 'number');
       
       if (hasStrokeWeights) {
         borderLabel.textContent = "Border";
@@ -1561,81 +1580,102 @@
       assetsSection.style.display = 'block';
       assetsList.innerHTML = '';
       
-      data.assets.forEach(asset => {
-        const assetItem = document.createElement('div');
-        assetItem.className = 'asset-item';
-        
-        // Create left section with preview and info
-        const assetLeft = document.createElement('div');
-        assetLeft.className = 'asset-left';
-        
-        // Create preview container
-        const assetPreview = document.createElement('div');
-        assetPreview.className = 'asset-preview';
-        
-        // Create preview image using PNG data
-        const img = document.createElement('img');
-        img.src = `data:image/png;base64,${arrayBufferToBase64(asset.png)}`;
-        assetPreview.appendChild(img);
-        
-        // Create info section
-        const assetInfo = document.createElement('div');
-        assetInfo.className = 'asset-info';
-        
-        const assetName = document.createElement('div');
-        assetName.className = 'asset-name';
-        assetName.textContent = asset.name;
-        
-        const assetType = document.createElement('div');
-        assetType.className = 'asset-type';
-        assetType.textContent = `${asset.width} × ${asset.height}`;
-        
-        assetInfo.appendChild(assetName);
-        assetInfo.appendChild(assetType);
-        
-        assetLeft.appendChild(assetPreview);
-        assetLeft.appendChild(assetInfo);
-        
-        // Create right section with format select and download button
-        const assetRight = document.createElement('div');
-        assetRight.className = 'asset-right';
-        
-        // Create format select
-        const formatSelect = document.createElement('select');
-        formatSelect.className = 'asset-format-select';
-        
-        const formats = [
-          { value: 'svg', label: 'SVG' },
-          { value: 'png', label: 'PNG' },
-          { value: 'jpg', label: 'JPG' }
-        ];
-        
-        formats.forEach(format => {
-          const option = document.createElement('option');
-          option.value = format.value;
-          option.textContent = format.label;
-          formatSelect.appendChild(option);
-        });
-        
-        const downloadButton = document.createElement('div');
-        downloadButton.className = 'asset-download';
-        downloadButton.textContent = 'Download';
-        
-        // Add click handler for download
-        downloadButton.addEventListener('click', () => {
-          const format = formatSelect.value;
-          downloadAsset(asset, format);
-        });
-        
-        assetRight.appendChild(formatSelect);
-        assetRight.appendChild(downloadButton);
-        
-        // Assemble the asset item
-        assetItem.appendChild(assetLeft);
-        assetItem.appendChild(assetRight);
-        
-        assetsList.appendChild(assetItem);
+      const asset = data.assets[0];
+      if (!asset) return;
+
+      const assetItem = document.createElement('div');
+      assetItem.className = 'asset-item';
+      
+      const assetLeft = document.createElement('div');
+      assetLeft.className = 'asset-left';
+      
+      // Create preview container with dynamic background
+      const assetPreview = document.createElement('div');
+      assetPreview.className = 'asset-preview';
+      
+      // If we have fill color information, use it to determine background
+      if (data.fills && data.fills.length > 0) {
+        const fill = data.fills[0];
+        if (fill.type === 'SOLID') {
+          const r = Math.round(fill.color.r * 255);
+          const g = Math.round(fill.color.g * 255);
+          const b = Math.round(fill.color.b * 255);
+          const brightness = calculateBrightness(r, g, b);
+          
+          // Adjust background based on color brightness
+          if (brightness < 160) { // Increased threshold for better visibility
+            assetPreview.style.backgroundColor = '#FFFFFF';
+          } else {
+            assetPreview.style.backgroundColor = '#1E1E1E'; // Darker background for light vectors
+          }
+        }
+      }
+      
+      // Create preview image using PNG data
+      const img = document.createElement('img');
+      img.src = `data:image/png;base64,${arrayBufferToBase64(asset.png)}`;
+      assetPreview.appendChild(img);
+      
+      // Create info section
+      const assetInfo = document.createElement('div');
+      assetInfo.className = 'asset-info';
+      
+      const assetName = document.createElement('div');
+      assetName.className = 'asset-name';
+      assetName.textContent = asset.name;
+      
+      const assetType = document.createElement('div');
+      assetType.className = 'asset-type';
+      assetType.textContent = `${Math.round(asset.width)} × ${Math.round(asset.height)}`;
+      
+      assetInfo.appendChild(assetName);
+      assetInfo.appendChild(assetType);
+      
+      assetLeft.appendChild(assetPreview);
+      assetLeft.appendChild(assetInfo);
+      
+      // Create right section with format select and download button
+      const assetRight = document.createElement('div');
+      assetRight.className = 'asset-right';
+      
+      // Create format select
+      const formatSelect = document.createElement('select');
+      formatSelect.className = 'asset-format-select';
+      
+      const formats = [
+        { value: 'svg', label: 'SVG' },
+        { value: 'png', label: 'PNG' }
+      ];
+      
+      formats.forEach(format => {
+        const option = document.createElement('option');
+        option.value = format.value;
+        option.textContent = format.label;
+        formatSelect.appendChild(option);
       });
+      
+      const downloadButton = document.createElement('div');
+      downloadButton.className = 'asset-download';
+      
+      const downloadIcon = document.createElement('div');
+      downloadIcon.className = 'download-icon';
+      
+      downloadButton.appendChild(downloadIcon);
+      
+      // Add click handler for download
+      downloadButton.addEventListener('click', () => {
+        const format = formatSelect.value;
+        downloadAsset(asset, format);
+      });
+      
+      assetRight.appendChild(formatSelect);
+      assetRight.appendChild(downloadButton);
+      
+      // Assemble the asset item
+      assetItem.appendChild(assetLeft);
+      assetItem.appendChild(assetRight);
+      
+      assetsList.appendChild(assetItem);
     }
     
     // Helper function to convert ArrayBuffer to base64
@@ -1683,6 +1723,17 @@
       
       // Show success message
       parent.postMessage({ pluginMessage: { type: 'showToast', message: 'Asset downloaded!' } }, '*');
+    }
+
+    // Add this helper function to calculate color brightness
+    function calculateBrightness(r, g, b) {
+      // Using the HSP color model which better matches human perception
+      // See: http://alienryderflex.com/hsp.html
+      return Math.sqrt(
+        0.299 * (r * r) +
+        0.587 * (g * g) +
+        0.114 * (b * b)
+      );
     }
   </script>
 </body>
