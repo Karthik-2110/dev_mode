@@ -952,14 +952,28 @@
       const elementName = document.getElementById('element-name').textContent.toLowerCase().replace(/\s+/g, '-');
       const cssSelector = isText ? `/* ${elementName} */\n` : '';
       
-      navigator.clipboard.writeText(cssSelector + cssText).then(() => {
-        // Show confirmation
-        const copyIcon = document.querySelector('.layout_copy_icon');
-        copyIcon.style.opacity = '0.5';
-        setTimeout(() => {
-          copyIcon.style.opacity = '1';
-        }, 500);
-      });
+      // Create temporary textarea for copying
+      const textarea = document.createElement('textarea');
+      textarea.value = cssSelector + cssText;
+      textarea.setAttribute('readonly', '');
+      textarea.style.position = 'absolute';
+      textarea.style.left = '-9999px';
+      document.body.appendChild(textarea);
+      
+      // Select and copy the text
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+      
+      // Show Figma's toast notification
+      parent.postMessage({ pluginMessage: { type: 'showToast', message: 'Copied to clipboard' } }, '*');
+      
+      // Show visual feedback
+      const copyIcon = document.querySelector('.layout_copy_icon');
+      copyIcon.style.opacity = '0.5';
+      setTimeout(() => {
+        copyIcon.style.opacity = '1';
+      }, 200);
     });
 
     // Listen for messages from the plugin
