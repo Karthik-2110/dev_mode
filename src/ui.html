@@ -71,6 +71,31 @@
       width: fit-content;
       display: flex;
       align-items: center;
+      position: relative;
+    }
+
+    .section-choice select {
+      appearance: none;
+      -webkit-appearance: none;
+      background: transparent;
+      border: none;
+      font-size: 10px;
+      font-weight: 400;
+      color: #fff;
+      padding-right: 16px;
+      cursor: pointer;
+      outline: none;
+      width: 100%;
+    }
+
+    .section-choice select:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(24, 160, 251, 0.3);
+    }
+
+    .section-choice select option {
+      background-color: #2C2C2C;
+      color: #fff;
     }
 
     .section-choice-icon {
@@ -79,7 +104,9 @@
       background-size: contain;
       background-repeat: no-repeat;
       background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMS4yNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS1jaGV2cm9uLWRvd24taWNvbiBsdWNpZGUtY2hldnJvbi1kb3duIj48cGF0aCBkPSJtNiA5IDYgNiA2LTYiLz48L3N2Zz4=");
-      margin-left: 4px;
+      position: absolute;
+      right: 8px;
+      pointer-events: none;
     }
 
     .property-row {
@@ -533,10 +560,123 @@
       margin-left: 6px;
     }
     
-    
-    
-    
-    
+    .assets-section {
+      padding: 16px 0px;
+      background-color: #2C2C2C;
+      border-top: 1px solid #444444;
+    }
+
+    .assets-list {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      margin-top: 6px;
+    }
+
+    .asset-item {
+      display: flex;
+      align-items: center;
+      padding: 10px 16px;
+      justify-content: space-between;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .asset-item:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .asset-item:hover .asset-right {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .asset-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .asset-preview {
+      width: 32px;
+      height: 32px;
+      border-radius: 4px;
+      background-color: #383838;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .asset-preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .asset-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .asset-name {
+      font-size: 13px;
+      color: #FFFFFF;
+    }
+
+    .asset-type {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .asset-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+
+    .asset-format-select {
+      background: transparent;
+      border: 1px solid #444444;
+      border-radius: 4px;
+      color: #FFFFFF;
+      font-size: 12px;
+      padding: 4px 8px;
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+      padding-right: 24px;
+      background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMS4yNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS1jaGV2cm9uLWRvd24taWNvbiBsdWNpZGUtY2hldnJvbi1kb3duIj48cGF0aCBkPSJtNiA5IDYgNiA2LTYiLz48L3N2Zz4=");
+      background-repeat: no-repeat;
+      background-position: right 4px center;
+      background-size: 16px;
+    }
+
+    .asset-format-select:focus {
+      outline: none;
+      border-color: #666666;
+    }
+
+    .asset-download {
+      padding: 4px 8px;
+      border-radius: 4px;
+      background-color: #444444;
+      color: #FFFFFF;
+      font-size: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+    }
+
+    .asset-download:hover {
+      background-color: #555555;
+    }
   </style>
 </head>
 <body>
@@ -605,14 +745,30 @@
      <!-- colors section -->
      <div id="colors-section" class="color-section">
       <div class="section_wrapper">
-        <div class="section-title">Selected colors</div>
+        <div class="section-title">Selection colors</div>
         <div class="section-choice">
-          Hex
-          <div class="section-choice-icon"></div>
+          <select aria-label="Color format">
+            <option value="hex">Hex</option>
+            <option value="hsl">HSL</option>
+            <option value="hsb">HSB</option>
+            <option value="rgb">RGB</option>
+            <option value="css">CSS</option>
+          </select>
+          <div class="section-choice-icon" aria-hidden="true"></div>
         </div>
       </div>
       <div id="colors-list" class="color-list">
         <!-- Colors will be populated dynamically -->
+      </div>
+    </div>
+
+       <!-- assets section -->
+    <div id="assets-section" class="assets-section">
+      <div class="section_wrapper">
+        <div class="section-title">Assets</div>
+      </div>
+      <div id="assets-list" class="assets-list">
+        <!-- Assets will be populated dynamically -->
       </div>
     </div>
     
@@ -655,6 +811,71 @@
         s: Math.round(s * 100),
         l: Math.round(l * 100)
       };
+    }
+
+    // Function to convert RGB to HSB
+    function rgbToHsb(r, g, b) {
+      r /= 255;
+      g /= 255;
+      b /= 255;
+      
+      const max = Math.max(r, g, b);
+      const min = Math.min(r, g, b);
+      const delta = max - min;
+      
+      let h, s;
+      const v = max;
+      
+      if (delta === 0) {
+        h = 0;
+        s = 0;
+      } else {
+        s = delta / max;
+        if (max === r) {
+          h = (g - b) / delta + (g < b ? 6 : 0);
+        } else if (max === g) {
+          h = (b - r) / delta + 2;
+        } else {
+          h = (r - g) / delta + 4;
+        }
+        h /= 6;
+      }
+      
+      return {
+        h: Math.round(h * 360),
+        s: Math.round(s * 100),
+        b: Math.round(v * 100)
+      };
+    }
+
+    // Function to get color value based on format
+    function getColorValue(r, g, b, opacity, format) {
+      switch (format) {
+        case 'hex':
+          return rgbToHex(r, g, b);
+        case 'rgb':
+          return `rgb(${r}, ${g}, ${b})`;
+        case 'hsl':
+          const hsl = rgbToHsl(r, g, b);
+          return `hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)`;
+        case 'hsb':
+          const hsb = rgbToHsb(r, g, b);
+          return `hsb(${hsb.h}, ${hsb.s}%, ${hsb.b}%)`;
+        case 'css':
+          return opacity < 1 
+            ? `rgba(${r}, ${g}, ${b}, ${opacity.toFixed(2)})`
+            : rgbToHex(r, g, b);
+        default:
+          return rgbToHex(r, g, b);
+      }
+    }
+
+    // Function to get display value (for showing in the UI)
+    function getDisplayValue(r, g, b, opacity, format) {
+      const colorValue = getColorValue(r, g, b, opacity, format);
+      // Only show opacity percentage if it's not already included in the color value (like rgba)
+      const showOpacity = !colorValue.includes('rgba') && opacity < 1;
+      return showOpacity ? `${colorValue} ${Math.round(opacity * 100)}%` : colorValue;
     }
 
     // Function to get node type with proper icon
@@ -844,68 +1065,87 @@
 
     // Function to update the box model visualization
     function updateBoxModel(data) {
-      if (!data.width || !data.height) {
+      if (!data || typeof data.width !== 'number' || typeof data.height !== 'number') {
         document.querySelector('.parent-box-model').style.display = 'none';
         return;
       }
       
       document.querySelector('.parent-box-model').style.display = 'flex';
       
+      // Helper function to safely convert any value to a number
+      const toSafeNumber = (value) => {
+        // Handle undefined, null, or symbol values
+        if (value === undefined || value === null || typeof value === 'symbol') {
+          return 0;
+        }
+        // If it's already a number, round it
+        if (typeof value === 'number') {
+          return Math.round(value);
+        }
+        // Try to convert to number, return 0 if fails
+        const num = Number(value);
+        return isNaN(num) ? 0 : Math.round(num);
+      };
+      
       // Update content dimensions
-      const contentWidth = Math.round(data.width);
-      const contentHeight = Math.round(data.height);
+      const contentWidth = toSafeNumber(data.width);
+      const contentHeight = toSafeNumber(data.height);
       document.getElementById('content-dimensions').textContent = `${contentWidth} × ${contentHeight}`;
       
-      // Update padding values
-      const paddingTop = Math.round(data.paddingTop || 0);
-      const paddingRight = Math.round(data.paddingRight || 0);
-      const paddingBottom = Math.round(data.paddingBottom || 0);
-      const paddingLeft = Math.round(data.paddingLeft || 0);
+      // Update padding values with safe conversion
+      document.getElementById('padding-top').textContent = toSafeNumber(data.paddingTop);
+      document.getElementById('padding-right').textContent = toSafeNumber(data.paddingRight);
+      document.getElementById('padding-bottom').textContent = toSafeNumber(data.paddingBottom);
+      document.getElementById('padding-left').textContent = toSafeNumber(data.paddingLeft);
       
-      document.getElementById('padding-top').textContent = paddingTop;
-      document.getElementById('padding-right').textContent = paddingRight;
-      document.getElementById('padding-bottom').textContent = paddingBottom;
-      document.getElementById('padding-left').textContent = paddingLeft;
-      
-      // Update border label based on what information is available
+      // Update border label and values
       const borderLabel = document.querySelector('.border-label');
       
-      // Check for individual corner radii
-      if (data.topLeftRadius !== undefined) {
-        borderLabel.textContent = "Border";
+      // Check for individual border radius values
+      const hasIndividualRadii = [
+        data.topLeftRadius,
+        data.topRightRadius,
+        data.bottomRightRadius,
+        data.bottomLeftRadius
+      ].some(value => value !== undefined && value !== null);
+      
+      if (hasIndividualRadii) {
+        borderLabel.textContent = "Border Radius";
         
-        // Use the corner radius values if they're different
-        document.getElementById('border-top').textContent = Math.round((data.topLeftRadius + data.topRightRadius) / 2 || 0);
-        document.getElementById('border-right').textContent = Math.round((data.topRightRadius + data.bottomRightRadius) / 2 || 0);
-        document.getElementById('border-bottom').textContent = Math.round((data.bottomLeftRadius + data.bottomRightRadius) / 2 || 0);
-        document.getElementById('border-left').textContent = Math.round((data.topLeftRadius + data.bottomLeftRadius) / 2 || 0);
+        document.getElementById('border-top').textContent = toSafeNumber(data.topLeftRadius);
+        document.getElementById('border-right').textContent = toSafeNumber(data.topRightRadius);
+        document.getElementById('border-bottom').textContent = toSafeNumber(data.bottomRightRadius);
+        document.getElementById('border-left').textContent = toSafeNumber(data.bottomLeftRadius);
         return;
       }
       
       // Check for individual stroke weights
-      if (data.strokeTopWeight !== undefined) {
+      const hasStrokeWeights = [
+        data.strokeTopWeight,
+        data.strokeRightWeight,
+        data.strokeBottomWeight,
+        data.strokeLeftWeight
+      ].some(value => value !== undefined && value !== null);
+      
+      if (hasStrokeWeights) {
         borderLabel.textContent = "Border";
         
-        document.getElementById('border-top').textContent = Math.round(data.strokeTopWeight || 0);
-        document.getElementById('border-right').textContent = Math.round(data.strokeRightWeight || 0);
-        document.getElementById('border-bottom').textContent = Math.round(data.strokeBottomWeight || 0);
-        document.getElementById('border-left').textContent = Math.round(data.strokeLeftWeight || 0);
+        document.getElementById('border-top').textContent = toSafeNumber(data.strokeTopWeight);
+        document.getElementById('border-right').textContent = toSafeNumber(data.strokeRightWeight);
+        document.getElementById('border-bottom').textContent = toSafeNumber(data.strokeBottomWeight);
+        document.getElementById('border-left').textContent = toSafeNumber(data.strokeLeftWeight);
         return;
       }
       
-      // Default case: Use cornerRadius or strokeWeight (whichever is larger)
-      const borderRadius = data.cornerRadius ? Math.round(data.cornerRadius) : 0;
-      const borderWeight = data.strokeWeight ? Math.round(data.strokeWeight) : 0;
+      // Default case: Use cornerRadius or strokeWeight
+      const borderRadius = toSafeNumber(data.cornerRadius);
+      const borderWeight = toSafeNumber(data.strokeWeight);
       
-      // Use border radius or stroke weight depending on which is larger
-      const borderValue = Math.max(borderRadius, borderWeight);
+      // Use border radius or stroke weight depending on which is present
+      const borderValue = borderRadius > 0 ? borderRadius : borderWeight;
       
       // Update the border label
-      if (borderRadius > borderWeight) {
-        borderLabel.textContent = "Border Radius";
-      } else {
-        borderLabel.textContent = "Border";
-      }
+      borderLabel.textContent = borderRadius > 0 ? "Border Radius" : "Border";
       
       // Set the same value for all sides
       document.getElementById('border-top').textContent = borderValue;
@@ -979,8 +1219,11 @@
     // Listen for messages from the plugin
     window.onmessage = event => {
       const message = event.data.pluginMessage;
+      // Store the last message for format changes
+      window.lastPluginMessage = message;
       if (message.type === 'selectionChange') {
         updateUI(message.data);
+        updateAssets(message.data);
       }
     };
 
@@ -1188,6 +1431,7 @@
       
       let hasColors = false;
       let isExpanded = false;
+      let currentFormat = document.querySelector('.section-choice select').value;
       
       // Process all colors from the node and its children
       if (data.allColors && data.allColors.length > 0) {
@@ -1204,17 +1448,18 @@
               const b = Math.round(color.color.b * 255);
               const opacity = color.opacity !== undefined ? color.opacity : 1;
               
-              // Create hex color
+              // Create hex color for preview
               const hex = rgbToHex(r, g, b);
               
               // Create color item
               const colorItem = document.createElement('div');
               colorItem.className = 'color-item';
               
-              // Add click handler to copy hex code
+              // Add click handler to copy color value
               colorItem.addEventListener('click', () => {
+                const colorValue = getColorValue(r, g, b, opacity, currentFormat);
                 const textarea = document.createElement('textarea');
-                textarea.value = hex;
+                textarea.value = colorValue;
                 textarea.setAttribute('readonly', '');
                 textarea.style.position = 'absolute';
                 textarea.style.left = '-9999px';
@@ -1232,7 +1477,7 @@
                 }, 200);
               });
               
-              // Create left section (color preview and hex value)
+              // Create left section (color preview and color value)
               const colorLeft = document.createElement('div');
               colorLeft.className = 'color-left';
               
@@ -1243,15 +1488,14 @@
               const colorValues = document.createElement('div');
               colorValues.className = 'color-values';
               
-              const hexValue = document.createElement('span');
-              const opacityPercentage = Math.round(opacity * 100);
-              hexValue.textContent = `${hex} ${opacityPercentage}%`;
+              const colorValue = document.createElement('span');
+              colorValue.textContent = getDisplayValue(r, g, b, opacity, currentFormat);
               
               const colorRight = document.createElement('div');
               colorRight.className = 'color-right';
               colorRight.textContent = color.nodeName;
               
-              colorValues.appendChild(hexValue);
+              colorValues.appendChild(colorValue);
               colorLeft.appendChild(colorPreview);
               colorLeft.appendChild(colorValues);
               colorItem.appendChild(colorLeft);
@@ -1293,6 +1537,152 @@
       
       // Show/hide the colors section based on whether we found any colors
       document.getElementById('colors-section').style.display = hasColors ? 'block' : 'none';
+    }
+
+    // Add event listener for format change
+    document.querySelector('.section-choice select').addEventListener('change', (e) => {
+      // Get the last received data from the plugin
+      const lastMessage = window.lastPluginMessage;
+      if (lastMessage && lastMessage.type === 'selectionChange' && lastMessage.data) {
+        updateColorPreview(lastMessage.data);
+      }
+    });
+
+    // Function to update the UI with assets
+    function updateAssets(data) {
+      const assetsList = document.getElementById('assets-list');
+      const assetsSection = document.getElementById('assets-section');
+      
+      if (!data || !data.assets || data.assets.length === 0) {
+        assetsSection.style.display = 'none';
+        return;
+      }
+      
+      assetsSection.style.display = 'block';
+      assetsList.innerHTML = '';
+      
+      data.assets.forEach(asset => {
+        const assetItem = document.createElement('div');
+        assetItem.className = 'asset-item';
+        
+        // Create left section with preview and info
+        const assetLeft = document.createElement('div');
+        assetLeft.className = 'asset-left';
+        
+        // Create preview container
+        const assetPreview = document.createElement('div');
+        assetPreview.className = 'asset-preview';
+        
+        // Create preview image using PNG data
+        const img = document.createElement('img');
+        img.src = `data:image/png;base64,${arrayBufferToBase64(asset.png)}`;
+        assetPreview.appendChild(img);
+        
+        // Create info section
+        const assetInfo = document.createElement('div');
+        assetInfo.className = 'asset-info';
+        
+        const assetName = document.createElement('div');
+        assetName.className = 'asset-name';
+        assetName.textContent = asset.name;
+        
+        const assetType = document.createElement('div');
+        assetType.className = 'asset-type';
+        assetType.textContent = `${asset.width} × ${asset.height}`;
+        
+        assetInfo.appendChild(assetName);
+        assetInfo.appendChild(assetType);
+        
+        assetLeft.appendChild(assetPreview);
+        assetLeft.appendChild(assetInfo);
+        
+        // Create right section with format select and download button
+        const assetRight = document.createElement('div');
+        assetRight.className = 'asset-right';
+        
+        // Create format select
+        const formatSelect = document.createElement('select');
+        formatSelect.className = 'asset-format-select';
+        
+        const formats = [
+          { value: 'svg', label: 'SVG' },
+          { value: 'png', label: 'PNG' },
+          { value: 'jpg', label: 'JPG' }
+        ];
+        
+        formats.forEach(format => {
+          const option = document.createElement('option');
+          option.value = format.value;
+          option.textContent = format.label;
+          formatSelect.appendChild(option);
+        });
+        
+        const downloadButton = document.createElement('div');
+        downloadButton.className = 'asset-download';
+        downloadButton.textContent = 'Download';
+        
+        // Add click handler for download
+        downloadButton.addEventListener('click', () => {
+          const format = formatSelect.value;
+          downloadAsset(asset, format);
+        });
+        
+        assetRight.appendChild(formatSelect);
+        assetRight.appendChild(downloadButton);
+        
+        // Assemble the asset item
+        assetItem.appendChild(assetLeft);
+        assetItem.appendChild(assetRight);
+        
+        assetsList.appendChild(assetItem);
+      });
+    }
+    
+    // Helper function to convert ArrayBuffer to base64
+    function arrayBufferToBase64(buffer) {
+      let binary = '';
+      const bytes = new Uint8Array(buffer);
+      const len = bytes.byteLength;
+      for (let i = 0; i < len; i++) {
+        binary += String.fromCharCode(bytes[i]);
+      }
+      return window.btoa(binary);
+    }
+    
+    // Function to download asset
+    function downloadAsset(asset, format) {
+      let data;
+      let mimeType;
+      let extension;
+      
+      switch (format) {
+        case 'svg':
+          data = asset.svg;
+          mimeType = 'image/svg+xml';
+          extension = 'svg';
+          break;
+        case 'png':
+          data = asset.png;
+          mimeType = 'image/png';
+          extension = 'png';
+          break;
+        default:
+          return;
+      }
+      
+      // Create download link
+      const blob = new Blob([data], { type: mimeType });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${asset.name}.${extension}`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      
+      // Show success message
+      parent.postMessage({ pluginMessage: { type: 'showToast', message: 'Asset downloaded!' } }, '*');
     }
   </script>
 </body>
