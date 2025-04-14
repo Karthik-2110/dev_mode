@@ -1,6 +1,6 @@
 {
-  "name": "Dev Mode Lite",
-  "id": "dev-mode-lite",
+  "name": "Dev Mode Pro",
+  "id": "dev-mode-pro",
   "api": "1.0.0",
   "main": "dist/code.js",
   "ui": "src/ui.html",

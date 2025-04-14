@@ -38,6 +38,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      padding: 0px 16px;
     }
 
     .section {
@@ -55,7 +56,7 @@
     }
 
     .color-section {
-      padding: 16px;
+      padding: 16px 0px;
       background-color: #2C2C2C;
       border-top: 1px solid #444444;
     }
@@ -106,21 +107,45 @@
     }
     .color-list {
       width: 100%;
+      display: flex;
+      flex-direction: column;
+      margin-top: 6px;
     }
+
     .color-item {
       display: flex;
       align-items: center;
-      margin-bottom: 14px;
-      width: 100%;
+      padding: 10px 16px;
+      justify-content: space-between;
+      cursor: pointer;
     }
+
+    .color-item:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .color-left {
+      display: flex;
+      align-items: center;
+    }
+
+    .color-right {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.8);
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+      width: 32%;
+      text-align: right;
+    }
+
     .color-item:last-child {
       margin-bottom: 0;
     }
     .color-swatch {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      margin-right: 12px;
+      width: 10px;
+      height: 10px;
+      margin-right: 8px;
     }
     .color-swatch.border {
       box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
@@ -129,9 +154,9 @@
       flex: 1;
     }
     .color-name {
-      font-size: 13px;
+      font-size: 12px;
+      font-weight: 400;
       color: #FFFFFF;
-      margin-bottom: 2px;
     }
     .color-value {
       font-family: 'SF Mono', 'Roboto Mono', monospace;
@@ -371,17 +396,18 @@
       margin: 0;
     }
     .color-preview {
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
-      margin-right: 12px;
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      width: 18px;
+      height: 18px;
+      border-radius: 4px;
+      margin-right: 16px;
     }
     .color-values {
+      margin-top: 2px;
       font-size: 12px;
       color: rgba(255, 255, 255, 0.8);
       display: flex;
       align-items: center;
+      font-family: 'SF Mono', 'Roboto Mono', monospace;
     }
 
     .color-preview-container {
@@ -507,108 +533,10 @@
       margin-left: 6px;
     }
     
-    /* Additional styles for colors section */
-    .color-section {
-      padding: 16px;
-      background-color: #2C2C2C;
-      border-radius: 6px;
-      margin-top: 16px;
-    }
     
-    .section_wrapper {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 16px;
-    }
     
-    .section-title {
-      font-size: 14px;
-      font-weight: 500;
-      color: #FFFFFF;
-    }
     
-    .section-choice {
-      display: flex;
-      align-items: center;
-      font-size: 12px;
-      color: rgba(255, 255, 255, 0.7);
-      cursor: pointer;
-    }
     
-    .section-choice-icon {
-      width: 12px;
-      height: 12px;
-      margin-left: 6px;
-      background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMS4yNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS1jaGV2cm9uLWRvd24taWNvbiBsdWNpZGUtY2hldnJvbi1kb3duIj48cGF0aCBkPSJtNiA5IDYgNiA2LTYiLz48L3N2Zz4=");
-      background-size: contain;
-      opacity: 0.7;
-    }
-    
-    .color-preview-container {
-      display: flex;
-      align-items: center;
-      width: 100%;
-      padding: 8px 0;
-    }
-    
-    .color-preview {
-      width: 36px;
-      height: 36px;
-      border-radius: 6px;
-      margin-right: 12px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      background-color: #FFFFFF;
-    }
-    
-    .color-values {
-      display: flex;
-      flex-direction: column;
-      flex: 1;
-    }
-    
-    .color-values span {
-      font-family: 'SF Mono', 'Roboto Mono', monospace;
-      font-size: 13px;
-      color: #FFFFFF;
-    }
-    
-    .color-format-dropdown {
-      position: absolute;
-      top: 30px;
-      right: 0;
-      width: 100px;
-      background-color: #3D3D3D;
-      border-radius: 4px;
-      overflow: hidden;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-      z-index: 10;
-      display: none;
-    }
-    
-    .color-format-option {
-      padding: 8px 12px;
-      font-size: 12px;
-      color: #FFFFFF;
-      cursor: pointer;
-    }
-    
-    .color-format-option:hover {
-      background-color: #505050;
-    }
-    
-    .no-colors {
-      text-align: center;
-      color: rgba(255, 255, 255, 0.5);
-      font-style: italic;
-      padding: 16px 0;
-    }
-    
-    .multiple-colors {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
   </style>
 </head>
 <body>
@@ -675,16 +603,16 @@
     </div>
     
      <!-- colors section -->
-     <div id="colors-section" class="color-section" style="display: none;">
+     <div id="colors-section" class="color-section">
       <div class="section_wrapper">
         <div class="section-title">Selected colors</div>
-        <div class="section-choice" id="color-format-selector">
-          <span id="current-format">HEX</span>
+        <div class="section-choice">
+          Hex
           <div class="section-choice-icon"></div>
         </div>
       </div>
-      <div id="colors-container">
-        <!-- Colors will be added here dynamically -->
+      <div id="colors-list" class="color-list">
+        <!-- Colors will be populated dynamically -->
       </div>
     </div>
     
@@ -787,11 +715,11 @@
         updateFrameLayout(data, layoutContent);
       }
 
-      // Update colors section
-      updateColors(data);
-
       // Update box model
       updateBoxModel(data);
+
+      // Update color preview
+      updateColorPreview(data);
     }
     
     // Function to update the text layout properties
@@ -1038,9 +966,6 @@
     window.onmessage = event => {
       const message = event.data.pluginMessage;
       if (message.type === 'selectionChange') {
-        // Save data for later reference
-        currentData = message.data;
-        // Update the UI with the node properties
         updateUI(message.data);
       }
     };
@@ -1242,102 +1167,118 @@
       }
     }
 
-    // Color format (HEX, RGB, HSL)
-    let currentColorFormat = 'HEX';
-    
-    // Function to update the colors section
-    function updateColors(data) {
-      const colorsSection = document.getElementById('colors-section');
-      const colorsContainer = document.getElementById('colors-container');
+    // Function to update the color preview
+    function updateColorPreview(data) {
+      const colorsList = document.getElementById('colors-list');
+      colorsList.innerHTML = ''; // Clear existing colors
       
-      // Check if we have colors to display
-      if (data.colors && data.colors.length > 0) {
-        colorsSection.style.display = 'block';
-        colorsContainer.innerHTML = '';
+      let hasColors = false;
+      let isExpanded = false;
+      
+      // Process all colors from the node and its children
+      if (data.allColors && data.allColors.length > 0) {
+        const solidColors = data.allColors.filter(color => color.type === 'SOLID' && color.visible !== false);
         
-        // Create color elements
-        if (data.colors.length === 1) {
-          // Single color display
-          const color = data.colors[0];
-          const colorPreview = document.createElement('div');
-          colorPreview.className = 'color-preview-container';
+        if (solidColors.length > 0) {
+          hasColors = true;
           
-          // Format based on current format selection
-          const colorValue = formatColorValue(color, currentColorFormat);
-          
-          colorPreview.innerHTML = `
-            <div class="color-preview" style="background-color: ${color.rgba}"></div>
-            <div class="color-values">
-              <span>${colorValue}</span>
-            </div>
-          `;
-          
-          colorsContainer.appendChild(colorPreview);
-        } else {
-          // Multiple colors display
-          const multipleColors = document.createElement('div');
-          multipleColors.className = 'multiple-colors';
-          
-          data.colors.forEach(color => {
-            const colorPreview = document.createElement('div');
-            colorPreview.className = 'color-preview-container';
+          // Function to render colors
+          const renderColors = (colors) => {
+            colors.forEach(color => {
+              const r = Math.round(color.color.r * 255);
+              const g = Math.round(color.color.g * 255);
+              const b = Math.round(color.color.b * 255);
+              const opacity = color.opacity !== undefined ? color.opacity : 1;
+              
+              // Create hex color
+              const hex = rgbToHex(r, g, b);
+              
+              // Create color item
+              const colorItem = document.createElement('div');
+              colorItem.className = 'color-item';
+              
+              // Add click handler to copy hex code
+              colorItem.addEventListener('click', () => {
+                const textarea = document.createElement('textarea');
+                textarea.value = hex;
+                textarea.setAttribute('readonly', '');
+                textarea.style.position = 'absolute';
+                textarea.style.left = '-9999px';
+                document.body.appendChild(textarea);
+                
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                
+                parent.postMessage({ pluginMessage: { type: 'showToast', message: 'Copied to clipboard' } }, '*');
+                
+                colorItem.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+                setTimeout(() => {
+                  colorItem.style.backgroundColor = '';
+                }, 200);
+              });
+              
+              // Create left section (color preview and hex value)
+              const colorLeft = document.createElement('div');
+              colorLeft.className = 'color-left';
+              
+              const colorPreview = document.createElement('div');
+              colorPreview.className = 'color-preview';
+              colorPreview.style.backgroundColor = hex;
+              
+              const colorValues = document.createElement('div');
+              colorValues.className = 'color-values';
+              
+              const hexValue = document.createElement('span');
+              const opacityPercentage = Math.round(opacity * 100);
+              hexValue.textContent = `${hex} ${opacityPercentage}%`;
+              
+              const colorRight = document.createElement('div');
+              colorRight.className = 'color-right';
+              colorRight.textContent = color.nodeName;
+              
+              colorValues.appendChild(hexValue);
+              colorLeft.appendChild(colorPreview);
+              colorLeft.appendChild(colorValues);
+              colorItem.appendChild(colorLeft);
+              colorItem.appendChild(colorRight);
+              colorsList.appendChild(colorItem);
+            });
+          };
+
+          // Initially show only first 5 colors
+          renderColors(solidColors.slice(0, 5));
+
+          // Add "see all" button if there are more than 5 colors
+          if (solidColors.length > 5) {
+            const seeAllButton = document.createElement('div');
+            seeAllButton.style.fontSize = '12px';
+            seeAllButton.style.color = 'rgba(255, 255, 255, 0.7)';
+            seeAllButton.style.cursor = 'pointer';
+            seeAllButton.style.padding = '8px 16px';
+            seeAllButton.textContent = `See all ${solidColors.length} colors`;
             
-            // Format based on current format selection
-            const colorValue = formatColorValue(color, currentColorFormat);
+            seeAllButton.addEventListener('click', () => {
+              if (!isExpanded) {
+                colorsList.innerHTML = ''; // Clear current list
+                renderColors(solidColors); // Show all colors
+                seeAllButton.textContent = 'Show less';
+                isExpanded = true;
+              } else {
+                colorsList.innerHTML = ''; // Clear current list
+                renderColors(solidColors.slice(0, 5)); // Show first 5 colors
+                seeAllButton.textContent = `See all ${solidColors.length} colors`;
+                isExpanded = false;
+              }
+            });
             
-            colorPreview.innerHTML = `
-              <div class="color-preview" style="background-color: ${color.rgba}"></div>
-              <div class="color-values">
-                <span>${colorValue}</span>
-              </div>
-            `;
-            
-            multipleColors.appendChild(colorPreview);
-          });
-          
-          colorsContainer.appendChild(multipleColors);
+            colorsList.appendChild(seeAllButton);
+          }
         }
-      } else {
-        // No colors to display
-        colorsSection.style.display = 'none';
       }
-    }
-    
-    // Function to format color values based on the selected format
-    function formatColorValue(color, format) {
-      switch (format) {
-        case 'RGB':
-          return `RGB(${color.r}, ${color.g}, ${color.b})`;
-        case 'RGBA':
-          return color.rgba;
-        case 'HEX':
-        default:
-          return color.hex;
-      }
-    }
-    
-    // Set up color format selection
-    document.getElementById('color-format-selector').addEventListener('click', function() {
-      const formats = ['HEX', 'RGB', 'RGBA'];
-      const currentIndex = formats.indexOf(currentColorFormat);
-      const nextIndex = (currentIndex + 1) % formats.length;
-      currentColorFormat = formats[nextIndex];
       
-      // Update the displayed format
-      document.getElementById('current-format').textContent = currentColorFormat;
-      
-      // Update all color displays
-      const currentData = getCurrentData();
-      if (currentData) {
-        updateColors(currentData);
-      }
-    });
-    
-    // Store current data for refreshing displays
-    let currentData = null;
-    
-    function getCurrentData() {
-      return currentData;
+      // Show/hide the colors section based on whether we found any colors
+      document.getElementById('colors-section').style.display = hasColors ? 'block' : 'none';
     }
   </script>
 </body>

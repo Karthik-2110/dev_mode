@@ -1,12 +1,53 @@
 // This is the main code that runs in the Figma environment
 
 // Main plugin code
-figma.showUI(__html__, { width: 400, height: 600 });
+figma.showUI(__html__, { width: 380, height: 500 });
 
 // Define message structure for type safety
 interface PluginMessage {
   type: string;
   [key: string]: any;
+}
+
+// Function to collect all colors from a node and its children
+function getAllColors(node: SceneNode) {
+  let colors: any[] = [];
+
+  // Get fills if available
+  if ('fills' in node && node.fills) {
+    const fills = node.fills;
+    if (Array.isArray(fills)) {
+      colors = colors.concat(fills.map(fill => ({
+        ...fill,
+        source: 'fill',
+        nodeName: node.name,
+        nodeType: node.type
+      })));
+    }
+  }
+
+  // Get strokes if available
+  if ('strokes' in node && node.strokes) {
+    const strokes = node.strokes;
+    if (Array.isArray(strokes)) {
+      colors = colors.concat(strokes.map(stroke => ({
+        ...stroke,
+        source: 'stroke',
+        nodeName: node.name,
+        nodeType: node.type
+      })));
+    }
+  }
+
+  // If node has children, recursively get their colors
+  if ('children' in node) {
+    const children = node.children;
+    children.forEach(child => {
+      colors = colors.concat(getAllColors(child));
+    });
+  }
+
+  return colors;
 }
 
 // Function to get node properties
@@ -18,6 +59,9 @@ function getNodeProperties(node: SceneNode) {
     width: node.width,
     height: node.height
   };
+
+  // Get all colors from node and its children
+  properties.allColors = getAllColors(node);
 
   // Get fills if available
   if ('fills' in node && node.fills) {
@@ -85,11 +129,6 @@ function getNodeProperties(node: SceneNode) {
   if ('blendMode' in node) {
     properties.blendMode = node.blendMode;
   }
-  
-  // Extract main colors from fills
-  if ('fills' in node && node.fills && Array.isArray(node.fills)) {
-    properties.colors = extractColors(node.fills);
-  }
 
   // Get text properties if the node is a text node
   if (node.type === 'TEXT') {
@@ -109,35 +148,6 @@ function getNodeProperties(node: SceneNode) {
   }
 
   return properties;
-}
-
-// Function to extract colors from fills
-function extractColors(fills: readonly Paint[]) {
-  if (!fills || !Array.isArray(fills)) return [];
-
-  const colors = [];
-  
-  for (const fill of fills) {
-    if (fill.type === 'SOLID' && fill.visible !== false) {
-      const r = Math.round(fill.color.r * 255);
-      const g = Math.round(fill.color.g * 255);
-      const b = Math.round(fill.color.b * 255);
-      const a = fill.opacity !== undefined ? fill.opacity : 1;
-      
-      colors.push({
-        r, g, b, a,
-        hex: rgbToHex(r, g, b),
-        rgba: `rgba(${r}, ${g}, ${b}, ${a.toFixed(2)})`
-      });
-    }
-  }
-  
-  return colors;
-}
-
-// Helper function to convert RGB to HEX
-function rgbToHex(r: number, g: number, b: number) {
-  return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase();
 }
 
 // Listen for selection changes
@@ -179,6 +189,9 @@ if (initialSelection.length > 0) {
 figma.ui.onmessage = msg => {
   if (msg.type === 'cancel') {
     figma.closePlugin();
+  }
+  if (msg.type === 'showToast') {
+    figma.notify(msg.message);
   }
 };
 
