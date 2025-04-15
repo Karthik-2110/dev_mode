@@ -1,7 +1,7 @@
 // This is the main code that runs in the Figma environment
 
 // Main plugin code
-figma.showUI(__html__, { width: 380, height: 500 });
+figma.showUI(__html__, { width: 380, height: 900 });
 
 // Define message structure for type safety
 interface PluginMessage {
@@ -54,81 +54,100 @@ function getAllColors(node: SceneNode) {
 async function getAllAssets(node: SceneNode) {
   let assets: any[] = [];
 
-  // Helper function to get vector elements
-  async function getVectorElements(node: SceneNode): Promise<any[]> {
-    let vectors: any[] = [];
+  // Helper function to get exportable elements
+  async function getExportableElements(node: SceneNode): Promise<any[]> {
+    let exportables: any[] = [];
     
-    // If the node itself is a vector, add it
-    if (node.type === 'VECTOR') {
+    // Handle vectors, images, and other exportable types
+    if (node.type === 'VECTOR' || node.type === 'RECTANGLE' || node.type === 'ELLIPSE') {
       try {
-        const svg = await node.exportAsync({
-          format: 'SVG',
-          svgOutlineText: true,
-          svgIdAttribute: false
-        });
+        const formats: ExportSettings[] = [
+          { format: 'SVG', svgOutlineText: true, svgIdAttribute: false },
+          { format: 'PNG', constraint: { type: 'SCALE', value: 2 } }
+        ];
 
-        const png = await node.exportAsync({
-          format: 'PNG',
-          constraint: { type: 'SCALE', value: 2 }
-        });
+        const exports = await Promise.all(formats.map(async format => {
+          try {
+            return {
+              format: format.format,
+              data: await node.exportAsync(format)
+            };
+          } catch (error) {
+            console.error(`Error exporting ${format.format}:`, error);
+            return null;
+          }
+        }));
 
-        vectors.push({
-          id: node.id,
-          name: node.name,
-          type: node.type,
-          width: node.width,
-          height: node.height,
-          svg: svg,
-          png: png
-        });
+        const validExports = exports.filter(exp => exp !== null);
+        
+        if (validExports.length > 0) {
+          exportables.push({
+            id: node.id,
+            name: node.name,
+            type: node.type,
+            width: node.width,
+            height: node.height,
+            exports: validExports
+          });
+        }
       } catch (error) {
-        console.error('Error exporting vector:', error);
+        console.error('Error exporting element:', error);
       }
     }
     
-    // If node is a group or frame, export it as a whole
-    if (node.type === 'GROUP' || (node.type === 'FRAME' && node.children.some(child => child.type === 'VECTOR'))) {
+    // Handle groups and frames containing exportable elements
+    if (node.type === 'GROUP' || (node.type === 'FRAME' && 
+        node.children.some(child => ['VECTOR', 'RECTANGLE', 'ELLIPSE'].indexOf(child.type) !== -1))) {
       try {
-        const svg = await node.exportAsync({
-          format: 'SVG',
-          svgOutlineText: true,
-          svgIdAttribute: false
-        });
+        const formats: ExportSettings[] = [
+          { format: 'SVG', svgOutlineText: true, svgIdAttribute: false },
+          { format: 'PNG', constraint: { type: 'SCALE', value: 2 } }
+        ];
 
-        const png = await node.exportAsync({
-          format: 'PNG',
-          constraint: { type: 'SCALE', value: 2 }
-        });
+        const exports = await Promise.all(formats.map(async format => {
+          try {
+            return {
+              format: format.format,
+              data: await node.exportAsync(format)
+            };
+          } catch (error) {
+            console.error(`Error exporting ${format.format}:`, error);
+            return null;
+          }
+        }));
 
-        vectors.push({
-          id: node.id,
-          name: node.name,
-          type: node.type,
-          width: node.width,
-          height: node.height,
-          svg: svg,
-          png: png
-        });
+        const validExports = exports.filter(exp => exp !== null);
+        
+        if (validExports.length > 0) {
+          exportables.push({
+            id: node.id,
+            name: node.name,
+            type: node.type,
+            width: node.width,
+            height: node.height,
+            exports: validExports
+          });
+        }
         
         // Don't process children individually if we exported the group
-        return vectors;
+        return exportables;
       } catch (error) {
         console.error('Error exporting group:', error);
       }
     }
     
-    // If node has children and wasn't exported as a group, recursively get vectors from them
+    // If node has children and wasn't exported as a group, recursively process them
     if ('children' in node) {
       for (const child of (node as ChildrenMixin).children) {
-        vectors = vectors.concat(await getVectorElements(child));
+        exportables = exportables.concat(await getExportableElements(child));
       }
     }
     
-    return vectors;
+    return exportables;
   }
 
-  // Get all vector elements from the node and its children
-  assets = await getVectorElements(node);
+  // Get all exportable elements from the node and its children
+  assets = await getExportableElements(node);
   return assets;
 }
 
@@ -287,24 +306,67 @@ if (initialSelection.length > 0) {
   });
 }
 
+// Function to parse resolution string into export settings
+function getExportSettings(format: string, resolution: string): ExportSettings {
+  if (format === 'SVG') {
+    return {
+      format: 'SVG',
+      svgOutlineText: true,
+      svgIdAttribute: false
+    };
+  }
+
+  // For PNG format
+  let constraint: { type: 'SCALE' | 'WIDTH' | 'HEIGHT', value: number };
+  if (resolution.endsWith('x')) {
+    // Scale format (e.g., '2x')
+    const scale = parseFloat(resolution);
+    constraint = { type: 'SCALE', value: scale };
+  } else if (resolution.endsWith('w')) {
+    // Width format (e.g., '512w')
+    const width = parseInt(resolution);
+    constraint = { type: 'WIDTH', value: width };
+  } else if (resolution.endsWith('h')) {
+    // Height format (e.g., '512h')
+    const height = parseInt(resolution);
+    constraint = { type: 'HEIGHT', value: height };
+  } else {
+    // Default to 1x scale
+    constraint = { type: 'SCALE', value: 1 };
+  }
+
+  return {
+    format: 'PNG',
+    constraint: constraint
+  };
+}
+
 // Handle messages from the UI
 figma.ui.onmessage = async (msg: PluginMessage) => {
   if (msg.type === 'cancel') {
     figma.closePlugin();
   }
-  if (msg.type === 'showToast' && typeof msg.message === 'string') {
+  else if (msg.type === 'showToast' && typeof msg.message === 'string') {
     figma.notify(msg.message);
   }
-  if (msg.type === 'exportAsset') {
+  else if (msg.type === 'exportAsset') {
     const node = figma.getNodeById(msg.nodeId);
     if (node && 'exportAsync' in node) {
-      const result = await (node as ExportMixin).exportAsync(msg.exportSettings);
-      figma.ui.postMessage({
-        type: 'assetExported',
-        nodeId: msg.nodeId,
-        format: msg.exportSettings.format,
-        data: result
-      });
+      try {
+        const exportSettings = getExportSettings(msg.format, msg.resolution);
+        const data = await (node as ExportMixin).exportAsync(exportSettings);
+        
+        figma.ui.postMessage({
+          type: 'exportComplete',
+          name: msg.name,
+          format: msg.format,
+          resolution: msg.resolution,
+          data: data
+        });
+      } catch (error) {
+        console.error('Export error:', error);
+        figma.notify('Error exporting asset');
+      }
     }
   }
 };

@@ -599,8 +599,10 @@
     }
 
     .asset-preview {
-      width: 32px !important;
-      height: 32px !important;
+      width: 42px !important;
+      height: 42px !important;
+      min-width: 42px !important;
+      min-height: 42px !important;
       border-radius: 4px;
       background-color: #383838;
       display: flex;
@@ -608,6 +610,8 @@
       justify-content: center;
       overflow: hidden;
       border: 1px solid rgba(255, 255, 255, 0.1);
+      image-rendering: -webkit-optimize-contrast;
+      image-rendering: crisp-edges;
     }
 
     .asset-preview img {
@@ -617,7 +621,13 @@
       background-size: contain !important;
       background-repeat: no-repeat !important;
       background-position: center !important;
-      padding: 4px;
+      padding: 6px;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+      -webkit-transform: translateZ(0) scale(1.0, 1.0);
+      transform: translateZ(0);
+      image-rendering: -webkit-optimize-contrast;
+      image-rendering: crisp-edges;
     }
 
     .asset-info {
@@ -669,10 +679,24 @@
       background-size: 14px;
     }
 
-    /* .asset-format-select:focus {
-      outline: none;
-      border-color: #666666;
-    } */
+    .asset-resolution-select {
+      display: none;
+      background: #2C2C2C;
+      border: transparent;
+      border-radius: 4px;
+      color: #FFFFFF;
+      font-size: 10px;
+      padding: 6px 8px;
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+      padding-right: 24px;
+      margin-left: 4px;
+      background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMS4yNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS1jaGV2cm9uLWRvd24taWNvbiBsdWNpZGUtY2hldnJvbi1kb3duIj48cGF0aCBkPSJtNiA5IDYgNiA2LTYiLz48L3N2Zz4=");
+      background-repeat: no-repeat;
+      background-position: right 4px center;
+      background-size: 14px;
+    }
 
     .asset-download {
       height: 24px;
@@ -1243,6 +1267,30 @@
       if (message.type === 'selectionChange') {
         updateUI(message.data);
         updateAssets(message.data);
+      } else if (message.type === 'exportComplete') {
+        // Handle the exported asset data
+        const { name, format, resolution, data } = message;
+        
+        // Create blob with the exported data
+        const blob = new Blob([data], { type: `image/${format.toLowerCase()}` });
+        const url = URL.createObjectURL(blob);
+        
+        // Create download link
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `${name}_${resolution}.${format.toLowerCase()}`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+        
+        // Show success message
+        parent.postMessage({ 
+          pluginMessage: { 
+            type: 'showToast', 
+            message: `Asset downloaded at ${resolution} resolution!` 
+          } 
+        }, '*');
       }
     };
 
@@ -1580,102 +1628,132 @@
       assetsSection.style.display = 'block';
       assetsList.innerHTML = '';
       
-      const asset = data.assets[0];
-      if (!asset) return;
-
-      const assetItem = document.createElement('div');
-      assetItem.className = 'asset-item';
-      
-      const assetLeft = document.createElement('div');
-      assetLeft.className = 'asset-left';
-      
-      // Create preview container with dynamic background
-      const assetPreview = document.createElement('div');
-      assetPreview.className = 'asset-preview';
-      
-      // If we have fill color information, use it to determine background
-      if (data.fills && data.fills.length > 0) {
-        const fill = data.fills[0];
-        if (fill.type === 'SOLID') {
-          const r = Math.round(fill.color.r * 255);
-          const g = Math.round(fill.color.g * 255);
-          const b = Math.round(fill.color.b * 255);
-          const brightness = calculateBrightness(r, g, b);
-          
-          // Adjust background based on color brightness
-          if (brightness < 160) { // Increased threshold for better visibility
-            assetPreview.style.backgroundColor = '#FFFFFF';
-          } else {
-            assetPreview.style.backgroundColor = '#1E1E1E'; // Darker background for light vectors
+      data.assets.forEach(asset => {
+        const assetItem = document.createElement('div');
+        assetItem.className = 'asset-item';
+        
+        // Create left section with preview and info
+        const assetLeft = document.createElement('div');
+        assetLeft.className = 'asset-left';
+        
+        // Create preview container
+        const assetPreview = document.createElement('div');
+        assetPreview.className = 'asset-preview';
+        
+        // If we have fill color information, use it to determine background
+        if (data.fills && data.fills.length > 0) {
+          const fill = data.fills[0];
+          if (fill.type === 'SOLID') {
+            const r = Math.round(fill.color.r * 255);
+            const g = Math.round(fill.color.g * 255);
+            const b = Math.round(fill.color.b * 255);
+            const brightness = calculateBrightness(r, g, b);
+            
+            // If the vector is light, use dark background
+            if (brightness < 160) {
+              assetPreview.style.backgroundColor = '#FFFFFF';
+            } else {
+              assetPreview.style.backgroundColor = '#1E1E1E';
+            }
           }
         }
-      }
-      
-      // Create preview image using PNG data
-      const img = document.createElement('img');
-      img.src = `data:image/png;base64,${arrayBufferToBase64(asset.png)}`;
-      assetPreview.appendChild(img);
-      
-      // Create info section
-      const assetInfo = document.createElement('div');
-      assetInfo.className = 'asset-info';
-      
-      const assetName = document.createElement('div');
-      assetName.className = 'asset-name';
-      assetName.textContent = asset.name;
-      
-      const assetType = document.createElement('div');
-      assetType.className = 'asset-type';
-      assetType.textContent = `${Math.round(asset.width)} × ${Math.round(asset.height)}`;
-      
-      assetInfo.appendChild(assetName);
-      assetInfo.appendChild(assetType);
-      
-      assetLeft.appendChild(assetPreview);
-      assetLeft.appendChild(assetInfo);
-      
-      // Create right section with format select and download button
-      const assetRight = document.createElement('div');
-      assetRight.className = 'asset-right';
-      
-      // Create format select
-      const formatSelect = document.createElement('select');
-      formatSelect.className = 'asset-format-select';
-      
-      const formats = [
-        { value: 'svg', label: 'SVG' },
-        { value: 'png', label: 'PNG' }
-      ];
-      
-      formats.forEach(format => {
-        const option = document.createElement('option');
-        option.value = format.value;
-        option.textContent = format.label;
-        formatSelect.appendChild(option);
+        
+        // Find PNG export for preview
+        const pngExport = asset.exports.find(exp => exp.format === 'PNG');
+        if (pngExport) {
+          const img = document.createElement('img');
+          img.src = `data:image/png;base64,${arrayBufferToBase64(pngExport.data)}`;
+          assetPreview.appendChild(img);
+        }
+        
+        // Create info section
+        const assetInfo = document.createElement('div');
+        assetInfo.className = 'asset-info';
+        
+        const assetName = document.createElement('div');
+        assetName.className = 'asset-name';
+        assetName.textContent = asset.name;
+        
+        const assetType = document.createElement('div');
+        assetType.className = 'asset-type';
+        assetType.textContent = `${Math.round(asset.width)} × ${Math.round(asset.height)}`;
+        
+        assetInfo.appendChild(assetName);
+        assetInfo.appendChild(assetType);
+        
+        assetLeft.appendChild(assetPreview);
+        assetLeft.appendChild(assetInfo);
+        
+        // Create right section with format select and download button
+        const assetRight = document.createElement('div');
+        assetRight.className = 'asset-right';
+        
+        // Create format select
+        const formatSelect = document.createElement('select');
+        formatSelect.className = 'asset-format-select';
+        
+        // Create resolution select
+        const resolutionSelect = document.createElement('select');
+        resolutionSelect.className = 'asset-resolution-select';
+        
+        // Add resolution options
+        const resolutions = ['0.5x', '0.75x', '1x', '1.5x', '2x', '3x', '4x', '512w', '512h'];
+        resolutions.forEach(res => {
+          const option = document.createElement('option');
+          option.value = res;
+          option.textContent = res;
+          if (res === '1x') option.selected = true;
+          resolutionSelect.appendChild(option);
+        });
+
+        // Add available formats
+        asset.exports.forEach(exp => {
+          const option = document.createElement('option');
+          option.value = exp.format.toLowerCase();
+          option.textContent = exp.format;
+          formatSelect.appendChild(option);
+        });
+
+        // Show/hide resolution select based on format
+        formatSelect.addEventListener('change', (e) => {
+          resolutionSelect.style.display = e.target.value === 'png' ? 'inline-block' : 'none';
+        });
+        
+        const downloadButton = document.createElement('div');
+        downloadButton.className = 'asset-download';
+        
+        const downloadIcon = document.createElement('div');
+        downloadIcon.className = 'download-icon';
+        
+        downloadButton.appendChild(downloadIcon);
+        
+        // Update click handler for download to include resolution
+        downloadButton.addEventListener('click', () => {
+          const format = formatSelect.value.toUpperCase();
+          const resolution = format === 'PNG' ? resolutionSelect.value : '1x';
+          
+          // Send message to plugin to get the correct resolution export
+          parent.postMessage({
+            pluginMessage: {
+              type: 'exportAsset',
+              nodeId: asset.id,
+              format: format,
+              resolution: resolution,
+              name: asset.name
+            }
+          }, '*');
+        });
+        
+        assetRight.appendChild(formatSelect);
+        assetRight.appendChild(resolutionSelect);
+        assetRight.appendChild(downloadButton);
+        
+        // Assemble the asset item
+        assetItem.appendChild(assetLeft);
+        assetItem.appendChild(assetRight);
+        
+        assetsList.appendChild(assetItem);
       });
-      
-      const downloadButton = document.createElement('div');
-      downloadButton.className = 'asset-download';
-      
-      const downloadIcon = document.createElement('div');
-      downloadIcon.className = 'download-icon';
-      
-      downloadButton.appendChild(downloadIcon);
-      
-      // Add click handler for download
-      downloadButton.addEventListener('click', () => {
-        const format = formatSelect.value;
-        downloadAsset(asset, format);
-      });
-      
-      assetRight.appendChild(formatSelect);
-      assetRight.appendChild(downloadButton);
-      
-      // Assemble the asset item
-      assetItem.appendChild(assetLeft);
-      assetItem.appendChild(assetRight);
-      
-      assetsList.appendChild(assetItem);
     }
     
     // Helper function to convert ArrayBuffer to base64
@@ -1687,42 +1765,6 @@
         binary += String.fromCharCode(bytes[i]);
       }
       return window.btoa(binary);
-    }
-    
-    // Function to download asset
-    function downloadAsset(asset, format) {
-      let data;
-      let mimeType;
-      let extension;
-      
-      switch (format) {
-        case 'svg':
-          data = asset.svg;
-          mimeType = 'image/svg+xml';
-          extension = 'svg';
-          break;
-        case 'png':
-          data = asset.png;
-          mimeType = 'image/png';
-          extension = 'png';
-          break;
-        default:
-          return;
-      }
-      
-      // Create download link
-      const blob = new Blob([data], { type: mimeType });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `${asset.name}.${extension}`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-      
-      // Show success message
-      parent.postMessage({ pluginMessage: { type: 'showToast', message: 'Asset downloaded!' } }, '*');
     }
 
     // Add this helper function to calculate color brightness
