@@ -369,6 +369,30 @@
       opacity: 0.8;
       z-index: 5;
     }
+
+    .border-top-value {
+      top: 6px;
+      left: 12px;
+      transform: translateX(-50%);
+    }
+    
+    .border-right-value {
+      right: 8px;
+      top: 13px;
+      transform: translateY(-50%);
+    }
+    
+    .border-bottom-value {
+      bottom: 6px;
+      right: 6px;
+      transform: translateX(-50%);
+    }
+    
+    .border-left-value {
+      left: 8px;
+      bottom: 0px;
+      transform: translateY(-50%);
+    }
     
     .top-value {
       top: 6px;
@@ -751,10 +775,16 @@
         <div id="box-model-container" class="box-model">
           <div class="box-border">
             <span class="box-label border-label">Border</span>
-            <span class="box-value top-value" id="border-top">8</span>
-            <span class="box-value right-value" id="border-right">8</span>
-            <span class="box-value bottom-value" id="border-bottom">8</span>
-            <span class="box-value left-value" id="border-left">8</span>
+            <span class="box-value border-top-value" id="border-top">8</span>
+            <span class="box-value border-right-value" id="border-right">8</span>
+            <span class="box-value border-bottom-value" id="border-bottom">8</span>
+            <span class="box-value border-left-value" id="border-left">8</span>
+
+            
+            <span class="box-value top-value" id="stroke-top">1</span>
+            <span class="box-value right-value" id="stroke-right">1</span>
+            <span class="box-value bottom-value" id="stroke-bottom">1</span>
+            <span class="box-value left-value" id="stroke-left">1</span>
             
             <div class="box-padding">
               <span class="box-label padding-label">Padding</span>
@@ -1152,8 +1182,34 @@
         data.bottomLeftRadius
       ].some(value => typeof value === 'number');
       
+      // Handle stroke weights first
+      let strokeTop = 0, strokeRight = 0, strokeBottom = 0, strokeLeft = 0;
+      
+      // Check for strokes in the element
+      if (data.strokes && data.strokes.length > 0) {
+        const stroke = data.strokes[0];
+        if (stroke.type === 'SOLID') {
+          // Check for individual stroke weights
+          if ([data.strokeTopWeight, data.strokeRightWeight, data.strokeBottomWeight, data.strokeLeftWeight].some(value => typeof value === 'number')) {
+            strokeTop = toSafeNumber(data.strokeTopWeight);
+            strokeRight = toSafeNumber(data.strokeRightWeight);
+            strokeBottom = toSafeNumber(data.strokeBottomWeight);
+            strokeLeft = toSafeNumber(data.strokeLeftWeight);
+          } else if (typeof data.strokeWeight === 'number') {
+            // Use uniform stroke weight
+            strokeTop = strokeRight = strokeBottom = strokeLeft = toSafeNumber(data.strokeWeight);
+          }
+        }
+      }
+
+      // Update stroke values in the UI
+      document.getElementById('stroke-top').textContent = strokeTop;
+      document.getElementById('stroke-right').textContent = strokeRight;
+      document.getElementById('stroke-bottom').textContent = strokeBottom;
+      document.getElementById('stroke-left').textContent = strokeLeft;
+
       if (hasIndividualRadii) {
-        borderLabel.textContent = "Border Radius";
+        borderLabel.textContent = "Border";
         
         document.getElementById('border-top').textContent = toSafeNumber(data.topLeftRadius);
         document.getElementById('border-right').textContent = toSafeNumber(data.topRightRadius);
