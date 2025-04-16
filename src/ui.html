@@ -61,6 +61,43 @@
       border-top: 1px solid #444444;
     }
 
+    .language-section-choice {
+      font-size: 10px;
+      font-weight: 400;
+      color: #fff;
+      padding: 5px 8px;
+      border: 1px solid #676767;
+      border-radius: 4px;
+      width: fit-content;
+      display: flex;
+      align-items: center;
+      position: relative;
+    }
+
+    .language-section-choice select {
+      appearance: none;
+      -webkit-appearance: none;
+      background: transparent;
+      border: none;
+      font-size: 10px;
+      font-weight: 400;
+      color: #fff;
+      padding-right: 16px;
+      cursor: pointer;
+      outline: none;
+      width: 100%;
+    }
+
+    .language-section-choice select:focus {
+      outline: none;
+      box-shadow: none;
+    }
+
+    .language-section-choice select option {
+      background-color: #2C2C2C;
+      color: #fff;
+    }
+
     .section-choice {
       font-size: 10px;
       font-weight: 400;
@@ -90,7 +127,7 @@
 
     .section-choice select:focus {
       outline: none;
-      box-shadow: 0 0 0 2px rgba(24, 160, 251, 0.3);
+      box-shadow: none;
     }
 
     .section-choice select option {
@@ -221,7 +258,7 @@
     }
     .color-format-dropdown:focus {
       outline: none;
-      border-color: #18A0FB;
+      border-color: transparent;
     }
     .dropdown-container {
       position: relative;
@@ -344,7 +381,7 @@
     .box-label {
       position: absolute;
       top: 7px;
-      left: 20px;
+      left: 22px;
       font-size: 12px;
       background-color: inherit;
       padding: 0 8px;
@@ -547,6 +584,12 @@
       padding: 0 12px;
     }
 
+    .layout_header_right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
     .layout_copy_icon { 
       height: 16px;
       width: 16px;
@@ -703,6 +746,12 @@
       background-size: 14px;
     }
 
+    .asset-format-select:focus,
+    .asset-resolution-select:focus {
+      outline: none;
+      box-shadow: none;
+    }
+
     .asset-resolution-select {
       display: none;
       background: #2C2C2C;
@@ -805,7 +854,27 @@
        <div class="layout_wrapper">
         <div class="layout_header">
           <p class="layout_title" id="layout_title">Layout</p>
-          <div class="layout_copy_icon"></div>
+
+          <div class="layout_header_right">
+            <div class="language-section-choice">
+              <select aria-label="Color format">
+                <option value="css">CSS</option>
+                <option value="tailwindcss">Tailwind CSS</option>
+                <option value="bootstrap">Bootstrap</option>
+                <option value="react">React</option>
+                <option value="vue">Vue</option>
+                <option value="svelte">Svelte</option>
+                <option value="angular">Angular</option>
+                <option value="qwik">Qwik</option>
+                <option value="swift">Swift</option>
+                <option value="flutter">Flutter</option>
+                <option value="kotlin">Kotlin</option>
+              </select>
+              <div class="section-choice-icon" aria-hidden="true"></div>
+            </div>
+
+            <div class="layout_copy_icon"></div>
+          </div>
         </div>
 
         <div class="layout_content"> 
@@ -1352,6 +1421,607 @@
 
     // Function to update frame CSS properties
     function updateFrameLayout(data, container) {
+      // Get the selected framework/language
+      const framework = document.querySelector('.language-section-choice select').value;
+      
+      // Clear previous content
+      container.innerHTML = '';
+      
+      switch (framework) {
+        case 'css':
+          generateDefaultCSS(data, container);
+          break;
+        case 'tailwindcss':
+          generateTailwindCSS(data, container);
+          break;
+        case 'bootstrap':
+          generateBootstrapClasses(data, container);
+          break;
+        case 'react':
+          generateReactStyles(data, container);
+          break;
+        case 'vue':
+          generateVueStyles(data, container);
+          break;
+        case 'svelte':
+          generateSvelteStyles(data, container);
+          break;
+        case 'angular':
+          generateAngularStyles(data, container);
+          break;
+        case 'qwik':
+          generateQwikStyles(data, container);
+          break;
+        case 'swift':
+          generateSwiftStyles(data, container);
+          break;
+        case 'flutter':
+          generateFlutterStyles(data, container);
+          break;
+        case 'kotlin':
+          generateKotlinStyles(data, container);
+          break;
+        default:
+          generateDefaultCSS(data, container);
+      }
+    }
+
+    // Function to generate Vue styles
+    function generateVueStyles(data, container) {
+      const styles = {};
+      
+      // Width and height
+      if (data.width !== undefined) styles.width = `${Math.round(data.width)}px`;
+      if (data.height !== undefined) styles.height = `${Math.round(data.height)}px`;
+      
+      // Padding
+      if (data.paddingTop !== undefined || data.paddingRight !== undefined ||
+          data.paddingBottom !== undefined || data.paddingLeft !== undefined) {
+        const top = data.paddingTop || 0;
+        const right = data.paddingRight || 0;
+        const bottom = data.paddingBottom || 0;
+        const left = data.paddingLeft || 0;
+        
+        if (top === right && right === bottom && bottom === left) {
+          styles.padding = `${top}px`;
+        } else {
+          styles.padding = `${top}px ${right}px ${bottom}px ${left}px`;
+        }
+      }
+      
+      // Background color
+      if (data.fills && data.fills.length > 0) {
+        const solidFills = data.fills.filter(fill => fill.type === 'SOLID' && fill.visible !== false);
+        if (solidFills.length > 0) {
+          const fill = solidFills[0];
+          const r = Math.round(fill.color.r * 255);
+          const g = Math.round(fill.color.g * 255);
+          const b = Math.round(fill.color.b * 255);
+          const opacity = fill.opacity !== undefined ? fill.opacity : 1;
+          
+          styles.backgroundColor = opacity < 1
+            ? `rgba(${r}, ${g}, ${b}, ${opacity.toFixed(2)})`
+            : rgbToHex(r, g, b);
+        }
+      }
+      
+      addLayoutProperty(container, ':style', JSON.stringify(styles, null, 2));
+    }
+
+    // Function to generate Svelte styles
+    function generateSvelteStyles(data, container) {
+      const styles = [];
+      
+      // Width and height
+      if (data.width !== undefined) styles.push(`width: ${Math.round(data.width)}px`);
+      if (data.height !== undefined) styles.push(`height: ${Math.round(data.height)}px`);
+      
+      // Padding
+      if (data.paddingTop !== undefined || data.paddingRight !== undefined ||
+          data.paddingBottom !== undefined || data.paddingLeft !== undefined) {
+        const top = data.paddingTop || 0;
+        const right = data.paddingRight || 0;
+        const bottom = data.paddingBottom || 0;
+        const left = data.paddingLeft || 0;
+        
+        if (top === right && right === bottom && bottom === left) {
+          styles.push(`padding: ${top}px`);
+        } else {
+          styles.push(`padding: ${top}px ${right}px ${bottom}px ${left}px`);
+        }
+      }
+      
+      addLayoutProperty(container, 'style', styles.join('; '));
+    }
+
+    // Function to generate Angular styles
+    function generateAngularStyles(data, container) {
+      const styles = {};
+      
+      // Width and height
+      if (data.width !== undefined) styles.width = `${Math.round(data.width)}px`;
+      if (data.height !== undefined) styles.height = `${Math.round(data.height)}px`;
+      
+      // Padding and other styles similar to Vue
+      if (data.paddingTop !== undefined || data.paddingRight !== undefined ||
+          data.paddingBottom !== undefined || data.paddingLeft !== undefined) {
+        const top = data.paddingTop || 0;
+        const right = data.paddingRight || 0;
+        const bottom = data.paddingBottom || 0;
+        const left = data.paddingLeft || 0;
+        
+        if (top === right && right === bottom && bottom === left) {
+          styles.padding = `${top}px`;
+        } else {
+          styles.padding = `${top}px ${right}px ${bottom}px ${left}px`;
+        }
+      }
+      
+      addLayoutProperty(container, '[ngStyle]', JSON.stringify(styles, null, 2));
+    }
+
+    // Function to generate Qwik styles
+    function generateQwikStyles(data, container) {
+      const styles = {};
+      
+      // Width and height
+      if (data.width !== undefined) styles.width = `${Math.round(data.width)}px`;
+      if (data.height !== undefined) styles.height = `${Math.round(data.height)}px`;
+      
+      // Add Qwik-specific styles
+      addLayoutProperty(container, 'style', JSON.stringify(styles, null, 2));
+    }
+
+    // Function to generate Swift styles
+    function generateSwiftStyles(data, container) {
+      const styles = [];
+      
+      // Width and height
+      if (data.width !== undefined) styles.push(`width: ${Math.round(data.width)}`);
+      if (data.height !== undefined) styles.push(`height: ${Math.round(data.height)}`);
+      
+      // Add Swift-specific modifiers
+      if (data.cornerRadius) {
+        styles.push(`cornerRadius: ${data.cornerRadius}`);
+      }
+      
+      addLayoutProperty(container, '.frame(', styles.join(', ') + ')');
+    }
+
+    // Function to generate Flutter styles
+    function generateFlutterStyles(data, container) {
+      const styles = [];
+      
+      // Width and height
+      if (data.width !== undefined) styles.push(`width: ${Math.round(data.width)}.0`);
+      if (data.height !== undefined) styles.push(`height: ${Math.round(data.height)}.0`);
+      
+      // Add Flutter-specific properties
+      if (data.cornerRadius) {
+        styles.push(`borderRadius: BorderRadius.circular(${data.cornerRadius}.0)`);
+      }
+      
+      addLayoutProperty(container, 'Container(', styles.join(',\n  '));
+    }
+
+    // Function to generate Kotlin styles
+    function generateKotlinStyles(data, container) {
+      const styles = [];
+      
+      // Width and height
+      if (data.width !== undefined) styles.push(`width = ${Math.round(data.width)}.dp`);
+      if (data.height !== undefined) styles.push(`height = ${Math.round(data.height)}.dp`);
+      
+      // Add Kotlin Compose modifiers
+      if (data.cornerRadius) {
+        styles.push(`clip(RoundedCornerShape(${data.cornerRadius}.dp))`);
+      }
+      
+      addLayoutProperty(container, 'Modifier', styles.join('\n    .'));
+    }
+
+    // Function to generate Tailwind CSS classes
+    function generateTailwindCSS(data, container) {
+      let classes = [];
+      
+      // Width and height
+      if (data.width !== undefined) {
+        classes.push(`w-[${Math.round(data.width)}px]`);
+      }
+      if (data.height !== undefined) {
+        classes.push(`h-[${Math.round(data.height)}px]`);
+      }
+      
+      // Padding
+      if (data.paddingTop !== undefined || data.paddingRight !== undefined ||
+          data.paddingBottom !== undefined || data.paddingLeft !== undefined) {
+        const top = data.paddingTop || 0;
+        const right = data.paddingRight || 0;
+        const bottom = data.paddingBottom || 0;
+        const left = data.paddingLeft || 0;
+        
+        if (top === right && right === bottom && bottom === left) {
+          classes.push(`p-[${top}px]`);
+        } else {
+          if (top > 0) classes.push(`pt-[${top}px]`);
+          if (right > 0) classes.push(`pr-[${right}px]`);
+          if (bottom > 0) classes.push(`pb-[${bottom}px]`);
+          if (left > 0) classes.push(`pl-[${left}px]`);
+        }
+      }
+      
+      // Background color
+      if (data.fills && data.fills.length > 0) {
+        const solidFills = data.fills.filter(fill => fill.type === 'SOLID' && fill.visible !== false);
+        if (solidFills.length > 0) {
+          const fill = solidFills[0];
+          const r = Math.round(fill.color.r * 255);
+          const g = Math.round(fill.color.g * 255);
+          const b = Math.round(fill.color.b * 255);
+          const opacity = fill.opacity !== undefined ? fill.opacity : 1;
+          
+          classes.push(`bg-[${rgbToHex(r, g, b)}]`);
+          if (opacity < 1) {
+            classes.push(`bg-opacity-[${Math.round(opacity * 100)}]`);
+          }
+        }
+      }
+      
+      // Border
+      if (data.strokes && data.strokes.length > 0) {
+        const solidStrokes = data.strokes.filter(stroke => stroke.type === 'SOLID' && stroke.visible !== false);
+        if (solidStrokes.length > 0 && data.strokeWeight) {
+          const stroke = solidStrokes[0];
+          const r = Math.round(stroke.color.r * 255);
+          const g = Math.round(stroke.color.g * 255);
+          const b = Math.round(stroke.color.b * 255);
+          
+          classes.push(`border-[${data.strokeWeight}px]`);
+          classes.push(`border-[${rgbToHex(r, g, b)}]`);
+        }
+      }
+      
+      // Border radius
+      if (data.cornerRadius !== undefined && data.cornerRadius > 0) {
+        classes.push(`rounded-[${data.cornerRadius}px]`);
+      }
+      
+      // Flexbox
+      if (data.layoutMode) {
+        classes.push('flex');
+        classes.push(data.layoutMode === 'HORIZONTAL' ? 'flex-row' : 'flex-col');
+        
+        if (data.primaryAxisAlignItems) {
+          const justifyMap = {
+            'MIN': 'justify-start',
+            'CENTER': 'justify-center',
+            'MAX': 'justify-end',
+            'SPACE_BETWEEN': 'justify-between'
+          };
+          classes.push(justifyMap[data.primaryAxisAlignItems] || 'justify-start');
+        }
+        
+        if (data.counterAxisAlignItems) {
+          const alignMap = {
+            'MIN': 'items-start',
+            'CENTER': 'items-center',
+            'MAX': 'items-end'
+          };
+          classes.push(alignMap[data.counterAxisAlignItems] || 'items-start');
+        }
+        
+        if (data.itemSpacing) {
+          classes.push(`gap-[${data.itemSpacing}px]`);
+        }
+      }
+      
+      // Add the classes to the container
+      addLayoutProperty(container, 'className', classes.join(' '));
+    }
+
+    // Function to generate React styles
+    function generateReactStyles(data, container) {
+      const styles = {};
+      
+      // Width and height
+      if (data.width !== undefined) styles.width = `${Math.round(data.width)}px`;
+      if (data.height !== undefined) styles.height = `${Math.round(data.height)}px`;
+      
+      // Padding
+      if (data.paddingTop !== undefined || data.paddingRight !== undefined ||
+          data.paddingBottom !== undefined || data.paddingLeft !== undefined) {
+        const top = data.paddingTop || 0;
+        const right = data.paddingRight || 0;
+        const bottom = data.paddingBottom || 0;
+        const left = data.paddingLeft || 0;
+        
+        if (top === right && right === bottom && bottom === left) {
+          styles.padding = `${top}px`;
+        } else {
+          styles.padding = `${top}px ${right}px ${bottom}px ${left}px`;
+        }
+      }
+      
+      // Background color
+      if (data.fills && data.fills.length > 0) {
+        const solidFills = data.fills.filter(fill => fill.type === 'SOLID' && fill.visible !== false);
+        if (solidFills.length > 0) {
+          const fill = solidFills[0];
+          const r = Math.round(fill.color.r * 255);
+          const g = Math.round(fill.color.g * 255);
+          const b = Math.round(fill.color.b * 255);
+          const opacity = fill.opacity !== undefined ? fill.opacity : 1;
+          
+          styles.backgroundColor = opacity < 1
+            ? `rgba(${r}, ${g}, ${b}, ${opacity.toFixed(2)})`
+            : rgbToHex(r, g, b);
+        }
+      }
+      
+      // Border
+      if (data.strokes && data.strokes.length > 0) {
+        const solidStrokes = data.strokes.filter(stroke => stroke.type === 'SOLID' && stroke.visible !== false);
+        if (solidStrokes.length > 0 && data.strokeWeight) {
+          const stroke = solidStrokes[0];
+          const r = Math.round(stroke.color.r * 255);
+          const g = Math.round(stroke.color.g * 255);
+          const b = Math.round(stroke.color.b * 255);
+          const opacity = stroke.opacity !== undefined ? stroke.opacity : 1;
+          
+          styles.borderWidth = `${data.strokeWeight}px`;
+          styles.borderStyle = 'solid';
+          styles.borderColor = opacity < 1
+            ? `rgba(${r}, ${g}, ${b}, ${opacity.toFixed(2)})`
+            : rgbToHex(r, g, b);
+        }
+      }
+      
+      // Border radius
+      if (data.cornerRadius !== undefined && data.cornerRadius > 0) {
+        styles.borderRadius = `${data.cornerRadius}px`;
+      }
+      
+      // Flexbox
+      if (data.layoutMode) {
+        styles.display = 'flex';
+        styles.flexDirection = data.layoutMode === 'HORIZONTAL' ? 'row' : 'column';
+        
+        if (data.primaryAxisAlignItems) {
+          const justifyMap = {
+            'MIN': 'flex-start',
+            'CENTER': 'center',
+            'MAX': 'flex-end',
+            'SPACE_BETWEEN': 'space-between'
+          };
+          styles.justifyContent = justifyMap[data.primaryAxisAlignItems] || 'flex-start';
+        }
+        
+        if (data.counterAxisAlignItems) {
+          const alignMap = {
+            'MIN': 'flex-start',
+            'CENTER': 'center',
+            'MAX': 'flex-end'
+          };
+          styles.alignItems = alignMap[data.counterAxisAlignItems] || 'flex-start';
+        }
+        
+        if (data.itemSpacing) {
+          styles.gap = `${data.itemSpacing}px`;
+        }
+      }
+      
+      // Convert styles object to string
+      const styleString = Object.entries(styles)
+        .map(([key, value]) => `  ${key}: '${value}'`)
+        .join(',\n');
+      
+      addLayoutProperty(container, 'style', `{\n${styleString}\n}`);
+    }
+
+    // Function to generate Bootstrap classes
+    function generateBootstrapClasses(data, container) {
+      let classes = [];
+      
+      // Width and height
+      if (data.width !== undefined) classes.push(`w-${Math.round(data.width)}`);
+      if (data.height !== undefined) classes.push(`h-${Math.round(data.height)}`);
+      
+      // Padding
+      if (data.paddingTop !== undefined || data.paddingRight !== undefined ||
+          data.paddingBottom !== undefined || data.paddingLeft !== undefined) {
+        const top = data.paddingTop || 0;
+        const right = data.paddingRight || 0;
+        const bottom = data.paddingBottom || 0;
+        const left = data.paddingLeft || 0;
+        
+        if (top === right && right === bottom && bottom === left) {
+          classes.push(`p-${Math.round(top / 4)}`);
+        } else {
+          if (top > 0) classes.push(`pt-${Math.round(top / 4)}`);
+          if (right > 0) classes.push(`pe-${Math.round(right / 4)}`);
+          if (bottom > 0) classes.push(`pb-${Math.round(bottom / 4)}`);
+          if (left > 0) classes.push(`ps-${Math.round(left / 4)}`);
+        }
+      }
+      
+      // Flexbox
+      if (data.layoutMode) {
+        classes.push('d-flex');
+        classes.push(data.layoutMode === 'HORIZONTAL' ? 'flex-row' : 'flex-column');
+        
+        if (data.primaryAxisAlignItems) {
+          const justifyMap = {
+            'MIN': 'justify-content-start',
+            'CENTER': 'justify-content-center',
+            'MAX': 'justify-content-end',
+            'SPACE_BETWEEN': 'justify-content-between'
+          };
+          classes.push(justifyMap[data.primaryAxisAlignItems] || 'justify-content-start');
+        }
+        
+        if (data.counterAxisAlignItems) {
+          const alignMap = {
+            'MIN': 'align-items-start',
+            'CENTER': 'align-items-center',
+            'MAX': 'align-items-end'
+          };
+          classes.push(alignMap[data.counterAxisAlignItems] || 'align-items-start');
+        }
+        
+        if (data.itemSpacing) {
+          classes.push(`gap-${Math.round(data.itemSpacing / 4)}`);
+        }
+      }
+      
+      // Border radius
+      if (data.cornerRadius !== undefined && data.cornerRadius > 0) {
+        classes.push(`rounded-${Math.round(data.cornerRadius / 4)}`);
+      }
+      
+      // Add the classes to the container
+      addLayoutProperty(container, 'class', classes.join(' '));
+      
+      // Add custom styles for colors and specific dimensions
+      const styles = [];
+      
+      // Background color
+      if (data.fills && data.fills.length > 0) {
+        const solidFills = data.fills.filter(fill => fill.type === 'SOLID' && fill.visible !== false);
+        if (solidFills.length > 0) {
+          const fill = solidFills[0];
+          const r = Math.round(fill.color.r * 255);
+          const g = Math.round(fill.color.g * 255);
+          const b = Math.round(fill.color.b * 255);
+          const opacity = fill.opacity !== undefined ? fill.opacity : 1;
+          
+          styles.push(`background-color: ${opacity < 1
+            ? `rgba(${r}, ${g}, ${b}, ${opacity.toFixed(2)})`
+            : rgbToHex(r, g, b)}`);
+        }
+      }
+      
+      // Add custom styles if any
+      if (styles.length > 0) {
+        addLayoutProperty(container, 'style', styles.join('; '));
+      }
+    }
+
+    // Function to generate framework-specific styles (Vue, Svelte, Angular, etc.)
+    function generateFrameworkStyles(data, container, framework) {
+      let prefix = '';
+      let suffix = '';
+      
+      switch (framework) {
+        case 'vue':
+          prefix = ':style="';
+          suffix = '"';
+          break;
+        case 'svelte':
+          prefix = 'style="';
+          suffix = '"';
+          break;
+        case 'angular':
+          prefix = '[ngStyle]="';
+          suffix = '"';
+          break;
+        default:
+          prefix = 'style="';
+          suffix = '"';
+      }
+      
+      const styles = [];
+      
+      // Width and height
+      if (data.width !== undefined) styles.push(`width: ${Math.round(data.width)}px`);
+      if (data.height !== undefined) styles.push(`height: ${Math.round(data.height)}px`);
+      
+      // Padding
+      if (data.paddingTop !== undefined || data.paddingRight !== undefined ||
+          data.paddingBottom !== undefined || data.paddingLeft !== undefined) {
+        const top = data.paddingTop || 0;
+        const right = data.paddingRight || 0;
+        const bottom = data.paddingBottom || 0;
+        const left = data.paddingLeft || 0;
+        
+        if (top === right && right === bottom && bottom === left) {
+          styles.push(`padding: ${top}px`);
+        } else {
+          styles.push(`padding: ${top}px ${right}px ${bottom}px ${left}px`);
+        }
+      }
+      
+      // Background color
+      if (data.fills && data.fills.length > 0) {
+        const solidFills = data.fills.filter(fill => fill.type === 'SOLID' && fill.visible !== false);
+        if (solidFills.length > 0) {
+          const fill = solidFills[0];
+          const r = Math.round(fill.color.r * 255);
+          const g = Math.round(fill.color.g * 255);
+          const b = Math.round(fill.color.b * 255);
+          const opacity = fill.opacity !== undefined ? fill.opacity : 1;
+          
+          styles.push(`background-color: ${opacity < 1
+            ? `rgba(${r}, ${g}, ${b}, ${opacity.toFixed(2)})`
+            : rgbToHex(r, g, b)}`);
+        }
+      }
+      
+      // Border
+      if (data.strokes && data.strokes.length > 0) {
+        const solidStrokes = data.strokes.filter(stroke => stroke.type === 'SOLID' && stroke.visible !== false);
+        if (solidStrokes.length > 0 && data.strokeWeight) {
+          const stroke = solidStrokes[0];
+          const r = Math.round(stroke.color.r * 255);
+          const g = Math.round(stroke.color.g * 255);
+          const b = Math.round(stroke.color.b * 255);
+          const opacity = stroke.opacity !== undefined ? stroke.opacity : 1;
+          
+          styles.push(`border: ${data.strokeWeight}px solid ${opacity < 1
+            ? `rgba(${r}, ${g}, ${b}, ${opacity.toFixed(2)})`
+            : rgbToHex(r, g, b)}`);
+        }
+      }
+      
+      // Border radius
+      if (data.cornerRadius !== undefined && data.cornerRadius > 0) {
+        styles.push(`border-radius: ${data.cornerRadius}px`);
+      }
+      
+      // Flexbox
+      if (data.layoutMode) {
+        styles.push('display: flex');
+        styles.push(`flex-direction: ${data.layoutMode === 'HORIZONTAL' ? 'row' : 'column'}`);
+        
+        if (data.primaryAxisAlignItems) {
+          const justifyMap = {
+            'MIN': 'flex-start',
+            'CENTER': 'center',
+            'MAX': 'flex-end',
+            'SPACE_BETWEEN': 'space-between'
+          };
+          styles.push(`justify-content: ${justifyMap[data.primaryAxisAlignItems] || 'flex-start'}`);
+        }
+        
+        if (data.counterAxisAlignItems) {
+          const alignMap = {
+            'MIN': 'flex-start',
+            'CENTER': 'center',
+            'MAX': 'flex-end'
+          };
+          styles.push(`align-items: ${alignMap[data.counterAxisAlignItems] || 'flex-start'}`);
+        }
+        
+        if (data.itemSpacing) {
+          styles.push(`gap: ${data.itemSpacing}px`);
+        }
+      }
+      
+      // Add the styles to the container
+      addLayoutProperty(container, prefix + styles.join('; ') + suffix, '');
+    }
+
+    // Function to generate default CSS
+    function generateDefaultCSS(data, container) {
       // Add layout mode properties if available
       if (data.layoutMode) {
         const layoutMode = data.layoutMode === 'HORIZONTAL' ? 'row' : 'column';
@@ -1386,14 +2056,11 @@
         const bottom = data.paddingBottom || 0;
         const left = data.paddingLeft || 0;
         
-        // Check if all padding values are the same
         if (top === right && right === bottom && bottom === left) {
           addLayoutProperty(container, 'padding', `${top}px`);
         } else if (top === bottom && left === right) {
-          // Vertical/horizontal padding is the same
           addLayoutProperty(container, 'padding', `${top}px ${right}px`);
         } else {
-          // All different padding values
           addLayoutProperty(container, 'padding', `${top}px ${right}px ${bottom}px ${left}px`);
         }
       }
@@ -1411,8 +2078,7 @@
           if (opacity < 1) {
             addLayoutProperty(container, 'background-color', `rgba(${r}, ${g}, ${b}, ${opacity.toFixed(2)})`);
           } else {
-            const hex = rgbToHex(r, g, b);
-            addLayoutProperty(container, 'background-color', hex);
+            addLayoutProperty(container, 'background-color', rgbToHex(r, g, b));
           }
         }
       }
@@ -1427,18 +2093,12 @@
           const b = Math.round(stroke.color.b * 255);
           const opacity = stroke.opacity !== undefined ? stroke.opacity : 1;
           
-          // Add border width
           addLayoutProperty(container, 'border-width', `${data.strokeWeight}px`);
-          
-          // Add border color
           if (opacity < 1) {
             addLayoutProperty(container, 'border-color', `rgba(${r}, ${g}, ${b}, ${opacity.toFixed(2)})`);
           } else {
-            const hex = rgbToHex(r, g, b);
-            addLayoutProperty(container, 'border-color', hex);
+            addLayoutProperty(container, 'border-color', rgbToHex(r, g, b));
           }
-          
-          // Add border style (always solid for now)
           addLayoutProperty(container, 'border-style', 'solid');
         }
       }
@@ -1446,106 +2106,18 @@
       // Add border radius if available
       if (data.cornerRadius !== undefined && data.cornerRadius > 0) {
         addLayoutProperty(container, 'border-radius', `${data.cornerRadius}px`);
-      } else if (data.topLeftRadius !== undefined) {
-        // Check for individual corner radii
-        const tl = data.topLeftRadius || 0;
-        const tr = data.topRightRadius || 0;
-        const br = data.bottomRightRadius || 0;
-        const bl = data.bottomLeftRadius || 0;
-        
-        // Check if all radius values are the same
-        if (tl === tr && tr === br && br === bl) {
-          addLayoutProperty(container, 'border-radius', `${tl}px`);
-        } else {
-          // All different radius values
-          addLayoutProperty(container, 'border-radius', `${tl}px ${tr}px ${br}px ${bl}px`);
-        }
-      }
-      
-      // Add box-shadow if available
-      if (data.effects && data.effects.length > 0) {
-        const shadows = data.effects.filter(effect => 
-          (effect.type === 'DROP_SHADOW' || effect.type === 'INNER_SHADOW') && effect.visible !== false
-        );
-        
-        if (shadows.length > 0) {
-          // If there's just one shadow, add it directly
-          if (shadows.length === 1) {
-            const shadow = shadows[0];
-            const r = Math.round(shadow.color.r * 255);
-            const g = Math.round(shadow.color.g * 255);
-            const b = Math.round(shadow.color.b * 255);
-            const a = shadow.color.a || 1;
-            const x = shadow.offset?.x || 0;
-            const y = shadow.offset?.y || 0;
-            const blur = shadow.radius || 0;
-            const spread = shadow.spread || 0;
-            const inset = shadow.type === 'INNER_SHADOW' ? 'inset ' : '';
-            
-            const shadowValue = `${inset}${x}px ${y}px ${blur}px ${spread}px rgba(${r}, ${g}, ${b}, ${a.toFixed(2)})`;
-            addLayoutProperty(container, 'box-shadow', shadowValue);
-          } else {
-            // If there are multiple shadows, combine them
-            const shadowValues = shadows.map(shadow => {
-              const r = Math.round(shadow.color.r * 255);
-              const g = Math.round(shadow.color.g * 255);
-              const b = Math.round(shadow.color.b * 255);
-              const a = shadow.color.a || 1;
-              const x = shadow.offset?.x || 0;
-              const y = shadow.offset?.y || 0;
-              const blur = shadow.radius || 0;
-              const spread = shadow.spread || 0;
-              const inset = shadow.type === 'INNER_SHADOW' ? 'inset ' : '';
-              
-              return `${inset}${x}px ${y}px ${blur}px ${spread}px rgba(${r}, ${g}, ${b}, ${a.toFixed(2)})`;
-            }).join(', ');
-            
-            addLayoutProperty(container, 'box-shadow', shadowValues);
-          }
-        }
-        
-        // Check for blur effects
-        const blurs = data.effects.filter(effect => 
-          effect.type === 'LAYER_BLUR' && effect.visible !== false
-        );
-        
-        if (blurs.length > 0) {
-          const blur = blurs[0];
-          addLayoutProperty(container, 'filter', `blur(${blur.radius}px)`);
-        }
-      }
-      
-      // Add opacity if available and less than 1
-      if (data.opacity !== undefined && data.opacity < 1) {
-        addLayoutProperty(container, 'opacity', data.opacity.toFixed(2));
-      }
-      
-      // Add mix-blend-mode if available and not normal
-      if (data.blendMode && data.blendMode !== 'NORMAL') {
-        const blendModeMap = {
-          'MULTIPLY': 'multiply',
-          'SCREEN': 'screen',
-          'OVERLAY': 'overlay',
-          'DARKEN': 'darken',
-          'LIGHTEN': 'lighten',
-          'COLOR_DODGE': 'color-dodge',
-          'COLOR_BURN': 'color-burn',
-          'HARD_LIGHT': 'hard-light',
-          'SOFT_LIGHT': 'soft-light',
-          'DIFFERENCE': 'difference',
-          'EXCLUSION': 'exclusion',
-          'HUE': 'hue',
-          'SATURATION': 'saturation',
-          'COLOR': 'color',
-          'LUMINOSITY': 'luminosity'
-        };
-        
-        const mixBlendMode = blendModeMap[data.blendMode];
-        if (mixBlendMode) {
-          addLayoutProperty(container, 'mix-blend-mode', mixBlendMode);
-        }
       }
     }
+
+    // Add event listener for framework/language change
+    document.querySelector('.language-section-choice select').addEventListener('change', (e) => {
+      // Get the last received data from the plugin
+      const lastMessage = window.lastPluginMessage;
+      if (lastMessage && lastMessage.type === 'selectionChange' && lastMessage.data) {
+        const layoutContent = document.querySelector('.layout_content');
+        updateFrameLayout(lastMessage.data, layoutContent);
+      }
+    });
 
     // Function to update the color preview
     function updateColorPreview(data) {
